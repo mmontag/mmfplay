@@ -1,6 +1,6 @@
 /* Extended Module Player
  * Copyright (C) 1997 Claudio Matsuoka and Hipolito Carraro Jr
- * $Id: chunk.c,v 1.2 2004/06/30 17:24:12 cmatsuoka Exp $
+ * $Id: chunk.c,v 1.3 2004/06/30 17:56:22 cmatsuoka Exp $
  *
  * This file is part of the Extended Module Player and is distributed
  * under the terms of the GNU General Public License. See doc/COPYING
@@ -18,8 +18,8 @@ void register_chunk(struct list_head *head, char *id, int size, void (*handler)(
 {
 	struct chunk_info *i;
 
-	i = malloc (sizeof (struct chunk_info));
-	strcpy (i->id, id);
+	i = malloc(sizeof (struct chunk_info));
+	strcpy(i->id, id);
 	i->id_size = size;
 	i->handler = handler;
 

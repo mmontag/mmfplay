@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.6 2004/06/30 17:28:48 cmatsuoka Exp $
+# $Id: Makefile,v 1.7 2004/06/30 17:56:22 cmatsuoka Exp $
 
 TOPDIR	= ..
 
@@ -10,7 +10,7 @@ DFILES	= Makefile $(OBJS:.o=.c) chunk.h list.h mmfplay.h play.h \
 CFILES	=
 DCFILES	=
 DDIRS	= sound opl3 buzzer
-LIBS	= -Lopl3 -lopl3 -Lsound -lsound -lm
+LIBS	= -Lopl3 -lopl3 -Lbuzzer -lbuzzer -Lsound -lsound -lm
 BIN	= mmfplay
 
 
