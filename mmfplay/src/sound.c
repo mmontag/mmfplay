@@ -13,9 +13,9 @@ struct sound_driver *snd;
 SINT16 *snd_buffer;
 
 extern struct device dev_fm;
-extern struct device dev_opl3;
-extern struct device dev_opl2;
-extern struct device dev_buzzer;
+//extern struct device dev_opl3;
+//extern struct device dev_opl2;
+//extern struct device dev_buzzer;
 
 LIST_HEAD(dev_head);
 
@@ -35,10 +35,10 @@ static void init_sound_device()
 	struct device_list *d;
 
 	printf("Initializing sound devices... ");
-	register_device(&dev_head, &dev_opl3);
-	register_device(&dev_head, &dev_opl2);
 	register_device(&dev_head, &dev_fm);
-	register_device(&dev_head, &dev_buzzer);
+	//register_device(&dev_head, &dev_opl3);
+	//register_device(&dev_head, &dev_opl2);
+	//register_device(&dev_head, &dev_buzzer);
 
 	list_for_each (h, &dev_head, next) {
 		d = list_entry(h, struct device_list, list);

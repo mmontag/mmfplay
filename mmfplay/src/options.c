@@ -54,7 +54,7 @@ int parse_cli (int argc, char **argv)
 	/* Set defaults */
 	memset (&opt, 0, sizeof (struct options));
 	opt.mode = MMFPLAY_PLAY;
-	opt.device = "opl3"; 
+	opt.device = "fm"; 
 	opt.solotrk = 0;
 
 	while ((o = getopt_long(argc, argv, OPTIONS, lopt, &optidx)) != -1) {

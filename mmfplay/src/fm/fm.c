@@ -10,11 +10,11 @@
 #define MAXOUT		(+32767)
 #define MINOUT		(-32768)
 
+#define FM_CHANNELS	18
 
 #define FREQ_SH			16  /* 16.16 fixed point (frequency calculations) */
 #define EG_SH			16  /* 16.16 fixed point (EG timing)              */
 #define LFO_SH			24  /*  8.24 fixed point (LFO calculations)       */
-#define TIMER_SH		16  /* 16.16 fixed point (timers calculations)    */
 
 #define FREQ_MASK		((1<<FREQ_SH)-1)
 
@@ -124,10 +124,7 @@ typedef struct{
 
 /* OPL3 state */
 typedef struct {
-	OPL3_CH	P_CH[18];		/* OPL3 chips have 18 channels	*/
-
-	UINT32	pan[18*4];		/* channels output masks (0xffffffff = enable); 4 masks per one channel */
-	UINT32	pan_ctrl_value[18];	/* output control values 1 per one channel (1 value contains 4 masks) */
+	OPL3_CH	P_CH[FM_CHANNELS];	/* OPL3 chips have 18 channels	*/
 
 	UINT32	eg_cnt;			/* global envelope generator counter	*/
 	UINT32	eg_timer;		/* global envelope generator counter works at frequency = chipclock/288 (288=8*36) */
@@ -144,28 +141,19 @@ typedef struct {
 	UINT32	lfo_pm_cnt;
 	UINT32	lfo_pm_inc;
 
-	UINT32	noise_rng;				/* 23 bit noise shift register	*/
-	UINT32	noise_p;				/* current noise 'phase'		*/
-	UINT32	noise_f;				/* current noise period			*/
+	UINT32	noise_rng;		/* 23 bit noise shift register	*/
+	UINT32	noise_p;		/* current noise 'phase'	*/
+	UINT32	noise_f;		/* current noise period		*/
 
-	UINT8	OPL3_mode;				/* OPL3 extension enable flag	*/
+	UINT8	OPL3_mode;		/* OPL3 extension enable flag	*/
 
-	UINT8	rhythm;					/* Rhythm mode					*/
+	UINT32	address;		/* address register		*/
+	UINT8	status;			/* status flag			*/
+	UINT8	statusmask;		/* status mask			*/
 
-	int		T[2];					/* timer counters				*/
-	UINT8	st[2];					/* timer enable					*/
-
-	UINT32	address;				/* address register				*/
-	UINT8	status;					/* status flag					*/
-	UINT8	statusmask;				/* status mask					*/
-
-	UINT8	nts;					/* NTS (note select)			*/
-
-	UINT8 type;						/* chip type					*/
-	int clock;						/* master clock  (Hz)			*/
-	int rate;						/* sampling rate (Hz)			*/
-	double freqbase;				/* frequency base				*/
-	double TimerBase;				/* Timer base time (==sampling time)*/
+	int clock;			/* master clock  (Hz)		*/
+	int rate;			/* sampling rate (Hz)		*/
+	double freqbase;		/* frequency base		*/
 } OPL3;
 
 
@@ -485,11 +473,11 @@ static int num_lock = 0;
 
 /* work table */
 static void *cur_chip = NULL;			/* current chip point */
-static OPL3_SLOT *SLOT7_1,*SLOT7_2,*SLOT8_1,*SLOT8_2;
+//static OPL3_SLOT *SLOT7_1,*SLOT7_2,*SLOT8_1,*SLOT8_2;
 
 static signed int phase_modulation;		/* phase modulation input (SLOT 2) */
 static signed int phase_modulation2;	/* phase modulation input (SLOT 3 in 4 operator channels) */
-static signed int chanout[18];			/* 18 channels */
+static signed int chanout[FM_CHANNELS];		/* 18 channels */
 
 
 static UINT32	LFO_AM;
@@ -506,44 +494,6 @@ INLINE int limit( int val, int max, int min ) {
 	return val;
 }
 
-
-/* status set and IRQ handling */
-INLINE void OPL3_STATUS_SET(OPL3 *chip,int flag)
-{
-	/* set status flag masking out disabled IRQs */
-	chip->status |= (flag & chip->statusmask);
-	if(!(chip->status & 0x80))
-	{
-		if(chip->status & 0x7f)
-		{	/* IRQ on */
-			chip->status |= 0x80;
-		}
-	}
-}
-
-/* status reset and IRQ handling */
-INLINE void OPL3_STATUS_RESET(OPL3 *chip,int flag)
-{
-	/* reset status flag */
-	chip->status &= ~flag;
-	if(chip->status & 0x80)
-	{
-		if (!(chip->status & 0x7f))
-		{
-			chip->status &= 0x7f;
-			/* callback user interrupt handler (IRQ is ON to OFF) */
-		}
-	}
-}
-
-/* IRQ mask set */
-INLINE void OPL3_STATUSMASK_SET(OPL3 *chip,int flag)
-{
-	chip->statusmask = flag;
-	/* IRQ handling check */
-	OPL3_STATUS_SET(chip,0);
-	OPL3_STATUS_RESET(chip,0);
-}
 
 
 /* advance LFO to next sample */
@@ -812,209 +762,6 @@ INLINE void chan_calc_ext( OPL3_CH *CH )
 
 }
 
-/*
-	operators used in the rhythm sounds generation process:
-
-	Envelope Generator:
-
-channel  operator  register number   Bass  High  Snare Tom  Top
-/ slot   number    TL ARDR SLRR Wave Drum  Hat   Drum  Tom  Cymbal
- 6 / 0   12        50  70   90   f0  +
- 6 / 1   15        53  73   93   f3  +
- 7 / 0   13        51  71   91   f1        +
- 7 / 1   16        54  74   94   f4              +
- 8 / 0   14        52  72   92   f2                    +
- 8 / 1   17        55  75   95   f5                          +
-
-	Phase Generator:
-
-channel  operator  register number   Bass  High  Snare Tom  Top
-/ slot   number    MULTIPLE          Drum  Hat   Drum  Tom  Cymbal
- 6 / 0   12        30                +
- 6 / 1   15        33                +
- 7 / 0   13        31                      +     +           +
- 7 / 1   16        34                -----  n o t  u s e d -----
- 8 / 0   14        32                                  +
- 8 / 1   17        35                      +                 +
-
-channel  operator  register number   Bass  High  Snare Tom  Top
-number   number    BLK/FNUM2 FNUM    Drum  Hat   Drum  Tom  Cymbal
-   6     12,15     B6        A6      +
-
-   7     13,16     B7        A7            +     +           +
-
-   8     14,17     B8        A8            +           +     +
-
-*/
-
-/* calculate rhythm */
-
-INLINE void chan_calc_rhythm( OPL3_CH *CH, unsigned int noise )
-{
-	OPL3_SLOT *SLOT;
-	signed int out;
-	unsigned int env;
-
-
-	/* Bass Drum (verified on real YM3812):
-	  - depends on the channel 6 'connect' register:
-	      when connect = 0 it works the same as in normal (non-rhythm) mode (op1->op2->out)
-	      when connect = 1 _only_ operator 2 is present on output (op2->out), operator 1 is ignored
-	  - output sample always is multiplied by 2
-	*/
-
-	phase_modulation = 0;
-
-	/* SLOT 1 */
-	SLOT = &CH[6].SLOT[SLOT1];
-	env = volume_calc(SLOT);
-
-	out = SLOT->op1_out[0] + SLOT->op1_out[1];
-	SLOT->op1_out[0] = SLOT->op1_out[1];
-
-	if (!SLOT->CON)
-		phase_modulation = SLOT->op1_out[0];
-	//else ignore output of operator 1
-
-	SLOT->op1_out[1] = 0;
-	if( env < ENV_QUIET )
-	{
-		if (!SLOT->FB)
-			out = 0;
-		SLOT->op1_out[1] = op_calc1(SLOT->Cnt, env, (out<<SLOT->FB), SLOT->wavetable );
-	}
-
-	/* SLOT 2 */
-	SLOT++;
-	env = volume_calc(SLOT);
-	if( env < ENV_QUIET )
-		chanout[6] += op_calc(SLOT->Cnt, env, phase_modulation, SLOT->wavetable) * 2;
-
-
-	/* Phase generation is based on: */
-	// HH  (13) channel 7->slot 1 combined with channel 8->slot 2 (same combination as TOP CYMBAL but different output phases)
-	// SD  (16) channel 7->slot 1
-	// TOM (14) channel 8->slot 1
-	// TOP (17) channel 7->slot 1 combined with channel 8->slot 2 (same combination as HIGH HAT but different output phases)
-
-	/* Envelope generation based on: */
-	// HH  channel 7->slot1
-	// SD  channel 7->slot2
-	// TOM channel 8->slot1
-	// TOP channel 8->slot2
-
-
-	/* The following formulas can be well optimized.
-	   I leave them in direct form for now (in case I've missed something).
-	*/
-
-	/* High Hat (verified on real YM3812) */
-	env = volume_calc(SLOT7_1);
-	if( env < ENV_QUIET )
-	{
-
-		/* high hat phase generation:
-			phase = d0 or 234 (based on frequency only)
-			phase = 34 or 2d0 (based on noise)
-		*/
-
-		/* base frequency derived from operator 1 in channel 7 */
-		unsigned char bit7 = ((SLOT7_1->Cnt>>FREQ_SH)>>7)&1;
-		unsigned char bit3 = ((SLOT7_1->Cnt>>FREQ_SH)>>3)&1;
-		unsigned char bit2 = ((SLOT7_1->Cnt>>FREQ_SH)>>2)&1;
-
-		unsigned char res1 = (bit2 ^ bit7) | bit3;
-
-		/* when res1 = 0 phase = 0x000 | 0xd0; */
-		/* when res1 = 1 phase = 0x200 | (0xd0>>2); */
-		UINT32 phase = res1 ? (0x200|(0xd0>>2)) : 0xd0;
-
-		/* enable gate based on frequency of operator 2 in channel 8 */
-		unsigned char bit5e= ((SLOT8_2->Cnt>>FREQ_SH)>>5)&1;
-		unsigned char bit3e= ((SLOT8_2->Cnt>>FREQ_SH)>>3)&1;
-
-		unsigned char res2 = (bit3e ^ bit5e);
-
-		/* when res2 = 0 pass the phase from calculation above (res1); */
-		/* when res2 = 1 phase = 0x200 | (0xd0>>2); */
-		if (res2)
-			phase = (0x200|(0xd0>>2));
-
-
-		/* when phase & 0x200 is set and noise=1 then phase = 0x200|0xd0 */
-		/* when phase & 0x200 is set and noise=0 then phase = 0x200|(0xd0>>2), ie no change */
-		if (phase&0x200)
-		{
-			if (noise)
-				phase = 0x200|0xd0;
-		}
-		else
-		/* when phase & 0x200 is clear and noise=1 then phase = 0xd0>>2 */
-		/* when phase & 0x200 is clear and noise=0 then phase = 0xd0, ie no change */
-		{
-			if (noise)
-				phase = 0xd0>>2;
-		}
-
-		chanout[7] += op_calc(phase<<FREQ_SH, env, 0, SLOT7_1->wavetable) * 2;
-	}
-
-	/* Snare Drum (verified on real YM3812) */
-	env = volume_calc(SLOT7_2);
-	if( env < ENV_QUIET )
-	{
-		/* base frequency derived from operator 1 in channel 7 */
-		unsigned char bit8 = ((SLOT7_1->Cnt>>FREQ_SH)>>8)&1;
-
-		/* when bit8 = 0 phase = 0x100; */
-		/* when bit8 = 1 phase = 0x200; */
-		UINT32 phase = bit8 ? 0x200 : 0x100;
-
-		/* Noise bit XOR'es phase by 0x100 */
-		/* when noisebit = 0 pass the phase from calculation above */
-		/* when noisebit = 1 phase ^= 0x100; */
-		/* in other words: phase ^= (noisebit<<8); */
-		if (noise)
-			phase ^= 0x100;
-
-		chanout[7] += op_calc(phase<<FREQ_SH, env, 0, SLOT7_2->wavetable) * 2;
-	}
-
-	/* Tom Tom (verified on real YM3812) */
-	env = volume_calc(SLOT8_1);
-	if( env < ENV_QUIET )
-		chanout[8] += op_calc(SLOT8_1->Cnt, env, 0, SLOT8_1->wavetable) * 2;
-
-	/* Top Cymbal (verified on real YM3812) */
-	env = volume_calc(SLOT8_2);
-	if( env < ENV_QUIET )
-	{
-		/* base frequency derived from operator 1 in channel 7 */
-		unsigned char bit7 = ((SLOT7_1->Cnt>>FREQ_SH)>>7)&1;
-		unsigned char bit3 = ((SLOT7_1->Cnt>>FREQ_SH)>>3)&1;
-		unsigned char bit2 = ((SLOT7_1->Cnt>>FREQ_SH)>>2)&1;
-
-		unsigned char res1 = (bit2 ^ bit7) | bit3;
-
-		/* when res1 = 0 phase = 0x000 | 0x100; */
-		/* when res1 = 1 phase = 0x200 | 0x100; */
-		UINT32 phase = res1 ? 0x300 : 0x100;
-
-		/* enable gate based on frequency of operator 2 in channel 8 */
-		unsigned char bit5e= ((SLOT8_2->Cnt>>FREQ_SH)>>5)&1;
-		unsigned char bit3e= ((SLOT8_2->Cnt>>FREQ_SH)>>3)&1;
-
-		unsigned char res2 = (bit3e ^ bit5e);
-		/* when res2 = 0 pass the phase from calculation above (res1); */
-		/* when res2 = 1 phase = 0x200 | 0x100; */
-		if (res2)
-			phase = 0x300;
-
-		chanout[8] += op_calc(phase<<FREQ_SH, env, 0, SLOT8_2->wavetable) * 2;
-	}
-
-}
-
 
 /* generic table initialize */
 static int init_tables(void)
@@ -1164,9 +911,6 @@ static void OPL3_initalize(OPL3 *chip)
 
 	/* frequency base */
 	chip->freqbase  = (chip->rate) ? ((double)chip->clock / (8.0*36)) / chip->rate  : 0;
-
-	/* Timer base time */
-	chip->TimerBase = 1.0 / ((double)chip->clock / (8.0*36) );
 
 	/* make fnumber -> increment counter table */
 	for( i=0 ; i < 1024 ; i++ )
@@ -1528,23 +1272,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 	switch(r&0xe0)
 	{
 	case 0x00:	/* 00-1f:control */
-		switch(r&0x1f)
-		{
-		case 0x01:	/* test register */
-		break;
-		case 0x02:	/* Timer 1 */
-			chip->T[0] = (256-v)*4;
-		break;
-		case 0x03:	/* Timer 2 */
-			chip->T[1] = (256-v)*16;
-		break;
-		case 0x08:	/* x,NTS,x,x, x,x,x,x */
-			chip->nts = v;
-		break;
-
-		default:
-		break;
-		}
 		break;
 	case 0x20:	/* am ON, vib ON, ksr, eg_type, mul */
 		slot = slot_array[r&0x1f];
@@ -1575,48 +1302,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			chip->lfo_am_depth = v & 0x80;
 			chip->lfo_pm_depth_range = (v&0x40) ? 8 : 0;
 
-			chip->rhythm = v&0x3f;
-
-			if(chip->rhythm&0x20)
-			{
-				/* BD key on/off */
-				if(v&0x10)
-				{
-					FM_KEYON (&chip->P_CH[6].SLOT[SLOT1], 2);
-					FM_KEYON (&chip->P_CH[6].SLOT[SLOT2], 2);
-				}
-				else
-				{
-					FM_KEYOFF(&chip->P_CH[6].SLOT[SLOT1],~2);
-					FM_KEYOFF(&chip->P_CH[6].SLOT[SLOT2],~2);
-				}
-				/* HH key on/off */
-				if(v&0x01) FM_KEYON (&chip->P_CH[7].SLOT[SLOT1], 2);
-				else       FM_KEYOFF(&chip->P_CH[7].SLOT[SLOT1],~2);
-				/* SD key on/off */
-				if(v&0x08) FM_KEYON (&chip->P_CH[7].SLOT[SLOT2], 2);
-				else       FM_KEYOFF(&chip->P_CH[7].SLOT[SLOT2],~2);
-				/* TOM key on/off */
-				if(v&0x04) FM_KEYON (&chip->P_CH[8].SLOT[SLOT1], 2);
-				else       FM_KEYOFF(&chip->P_CH[8].SLOT[SLOT1],~2);
-				/* TOP-CY key on/off */
-				if(v&0x02) FM_KEYON (&chip->P_CH[8].SLOT[SLOT2], 2);
-				else       FM_KEYOFF(&chip->P_CH[8].SLOT[SLOT2],~2);
-			}
-			else
-			{
-				/* BD key off */
-				FM_KEYOFF(&chip->P_CH[6].SLOT[SLOT1],~2);
-				FM_KEYOFF(&chip->P_CH[6].SLOT[SLOT2],~2);
-				/* HH key off */
-				FM_KEYOFF(&chip->P_CH[7].SLOT[SLOT1],~2);
-				/* SD key off */
-				FM_KEYOFF(&chip->P_CH[7].SLOT[SLOT2],~2);
-				/* TOM key off */
-				FM_KEYOFF(&chip->P_CH[8].SLOT[SLOT1],~2);
-				/* TOP-CY off */
-				FM_KEYOFF(&chip->P_CH[8].SLOT[SLOT2],~2);
-			}
 			return;
 		}
 
@@ -1749,10 +1434,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			/* the info below is actually opposite to what is stated in the Manuals (verifed on real YMF262) */
 			/* if notesel == 0 -> lsb of kcode is bit 10 (MSB) of fnum  */
 			/* if notesel == 1 -> lsb of kcode is bit 9 (MSB-1) of fnum */
-			if (chip->nts&0x40)
-				CH->kcode |= (CH->block_fnum&0x100)>>8;	/* notesel == 1 */
-			else
-				CH->kcode |= (CH->block_fnum&0x200)>>9;	/* notesel == 0 */
+			CH->kcode |= (CH->block_fnum&0x200)>>9;	/* notesel == 0 */
 
 			if (chip->OPL3_mode & 1)
 			{
@@ -2056,8 +1738,6 @@ static void OPL3ResetChip(OPL3 *chip)
 	chip->eg_cnt   = 0;
 
 	chip->noise_rng = 1;	/* noise shift register */
-	chip->nts       = 0;	/* note split */
-	OPL3_STATUS_RESET(chip,0x60);
 
 	/* reset with register write */
 	OPL3WriteReg(chip,0x01,0); /* test register */
@@ -2189,23 +1869,7 @@ static unsigned char OPL3Read(OPL3 *chip,int a)
 
 
 
-static int OPL3TimerOver(OPL3 *chip,int c)
-{
-	if( c )
-	{	/* Timer B */
-		OPL3_STATUS_SET(chip,0x20);
-	}
-	else
-	{	/* Timer A */
-		OPL3_STATUS_SET(chip,0x40);
-	}
-	return chip->status>>7;
-}
 
-
-
-
-#if (BUILD_YMF262)
 
 #define MAX_OPL3_CHIPS 4
 
@@ -2271,10 +1935,6 @@ unsigned char YMF262Read(int which, int a)
 
 	return OPL3Read(YMF262[which], a);
 }
-int YMF262TimerOver(int which, int c)
-{
-	return OPL3TimerOver(YMF262[which], c);
-}
 
 
 
@@ -2283,22 +1943,16 @@ int YMF262TimerOver(int which, int c)
 void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 {
 	OPL3		*chip  = YMF262[which];
-	UINT8		rhythm = chip->rhythm&0x20;
 
 	/*OPL3SAMPLE	*ch_a = buffers[0];
 	OPL3SAMPLE	*ch_b = buffers[1];
 	OPL3SAMPLE	*ch_c = buffers[2];
 	OPL3SAMPLE	*ch_d = buffers[3];*/
 
-	int i;
+	int i, c;
 
 	if( (void *)chip != cur_chip ){
 		cur_chip = (void *)chip;
-		/* rhythm slots */
-		SLOT7_1 = &chip->P_CH[7].SLOT[SLOT1];
-		SLOT7_2 = &chip->P_CH[7].SLOT[SLOT2];
-		SLOT8_1 = &chip->P_CH[8].SLOT[SLOT1];
-		SLOT8_2 = &chip->P_CH[8].SLOT[SLOT2];
 	}
 	for( i=0; i < length ; i++ )
 	{
@@ -2307,7 +1961,7 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 		advance_lfo(chip);
 
 		/* clear channel outputs */
-		memset(chanout, 0, sizeof(signed int) * 18);
+		memset(chanout, 0, sizeof(signed int) * FM_CHANNELS);
 
 #if 1
 	/* register set #1 */
@@ -2332,16 +1986,9 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 			chan_calc(&chip->P_CH[5]);		/* standard 2op ch#5 */
 
 
-		if(!rhythm)
-		{
-			chan_calc(&chip->P_CH[6]);
-			chan_calc(&chip->P_CH[7]);
-			chan_calc(&chip->P_CH[8]);
-		}
-		else		/* Rhythm part */
-		{
-			chan_calc_rhythm(&chip->P_CH[0], (chip->noise_rng>>0)&1 );
-		}
+		chan_calc(&chip->P_CH[6]);
+		chan_calc(&chip->P_CH[7]);
+		chan_calc(&chip->P_CH[8]);
 
 	/* register set #2 */
 		chan_calc(&chip->P_CH[ 9]);
@@ -2373,31 +2020,8 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 
 		/* accumulator register set #1 */
 		a =  chanout[0];
-		a += chanout[1];
-		a += chanout[2];
-
-		a += chanout[3];
-		a += chanout[4];
-		a += chanout[5];
-
-		a += chanout[6];
-		a += chanout[7];
-		a += chanout[8];
-
-		/* accumulator register set #2 */
-		a += chanout[9];
-		a += chanout[10];
-		a += chanout[11];
-
-		a += chanout[12];
-		a += chanout[13];
-		a += chanout[14];
-
-		a += chanout[15];
-		a += chanout[16];
-		a += chanout[17];
-
-		a >>= FINAL_SH;
+		for (c = 1; c < FM_CHANNELS; c++)
+			a += chanout[c];
 
 		/* limit check */
 		a = limit( a , MAXOUT, MINOUT );
@@ -2416,4 +2040,3 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 
 }
 
-#endif /* BUILD_YMF262 */

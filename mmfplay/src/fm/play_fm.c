@@ -120,7 +120,8 @@ static void set_ins(int c, int n, int v)
 	n &= 0x7f;
 
 	if (is_drum)
-		ins = &opl3_drum[n];
+		return;
+		//ins = &opl3_drum[n];
 	else
 		ins = &opl3_ins[n];
 
