@@ -1,25 +1,17 @@
-/*  Sarien - A Sierra AGI resource interpreter engine
- *  Copyright (C) 1999-2001 Stuart George and Claudio Matsuoka
- *  
- *  $Id: sound_macos.c,v 1.1 2004/07/01 01:40:22 cmatsuoka Exp $
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; see docs/COPYING for further details.
- *
- *  Carbon MacOS Sound Driver written by Jeremy Penner, jeremy@astra.mb.ca
+/* 
+ * Carbon MacOS Sound Driver written by Jeremy Penner, jeremy@astra.mb.ca
  */
 
 #include <Carbon/Carbon.h>
 
-#include "sarien.h"
-#include "console.h"
+/*#include "mmfplay.h"*/
+/*#include "console.h"*/
 #include "sound.h"
 
 static int macos_init_sound (SINT16 *buffer);
 static void macos_close_sound (void);
 
-static UINT16 *sarienbuf;
+static UINT16 *mmfplaybuf;
 static UINT8 *buffer[2];
 static CmpSoundHeader header;
 static SndChannel *channel = NULL;
@@ -52,10 +44,13 @@ static void fill_sound (SndChannel *chan, SndCommand *cmd_passed)
 
 	memset (buffer[fill_me], 0, BUFFER_SIZE << 1);
 
+	/* FIXME! */
+#if 0
 	play_sound();
 	mix_sound();
+#endif
 	
-	memcpy (buffer[fill_me], sarienbuf, BUFFER_SIZE << 1);
+	memcpy (buffer[fill_me], mmfplaybuf, BUFFER_SIZE << 1);
 
 	cmd.cmd = callBackCmd;
 	cmd.param1 = 0;
@@ -71,7 +66,7 @@ static int macos_init_sound (SINT16 *b)
 
 	report ("sound_macos: written by jeremy@astra.mb.ca\n");
 
-	sarienbuf = b;
+	mmfplaybuf = b;
 
 	header.numChannels = 1;
 	header.sampleSize = 16;

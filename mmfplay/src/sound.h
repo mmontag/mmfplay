@@ -6,8 +6,12 @@
 
 #define BUFFER_SIZE 152
 
-
+/* FIXME */
+#ifndef MACOSX
 #define report(x...) printf(" snd: " x)
+#else
+#define report printf(" snd: "); printf
+#endif
 
 struct sound_driver {
         char *description;
