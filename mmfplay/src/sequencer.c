@@ -24,6 +24,7 @@ static void decrement_channel_timer()
 	}
 }
 
+#if 0
 static void show_channel_data()
 {
 	int i;
@@ -34,6 +35,7 @@ static void show_channel_data()
 	}
 	printf("\n");
 }
+#endif
 
 int seq_alloc_channel()
 {
@@ -68,7 +70,7 @@ void seq_set_note(int c, int i, int timer, int track)
 
 void seq_tick()
 {
-	show_channel_data();
+	/* show_channel_data(); */
 	decrement_channel_timer();
 }
 

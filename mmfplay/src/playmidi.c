@@ -30,7 +30,7 @@ static void midi_note_on(int trk, int note, int vel, int time)
 
 	assert(trk < MIDI_TRACKS);
 
-if (trk > 0) return;
+if (trk > 2) return;
 
 	if (vel > 63)
 		vel = 63;

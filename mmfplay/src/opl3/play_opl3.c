@@ -102,17 +102,14 @@ static void set_ins(int c, int n)
 
 static void set_note(int c, int n)
 {
-	int oct, freq, fnum, block;
+	int fnum, freq, block;
 
-	/*n = 112 - n;*/
-	n = n - 36;
+	block = n / 12;
+	n = n - 24;
 
-	oct = n / 12;
 	freq = 66.0 * pow(2.0, 1.0*n/12.0);
-	printf("freq = %d\n", freq);
-	block = 10 + oct;
 
-	fnum = freq << (20 - block) / 49716;
+	fnum = (freq << (20 - block)) / 49716;
 	
 	opl3_write_chan(c, OPL3_REG_CH_FREQ, fnum & 0xff);
 	opl3_write_chan(c, OPL3_REG_CH_KEY_BLOCK,
