@@ -1,12 +1,18 @@
-$Id: README,v 1.3 2004/06/29 22:30:28 cmatsuoka Exp $
+$Id: README,v 1.4 2004/07/03 00:32:50 cmatsuoka Exp $
 
 MMFplay - A player for SMAF files
 
 
-Currently works in Linux.
+Current status:
 
+- tested in Linux
+- compiles on Linux, Solaris and BSD
+- plays MA-3 SMAF files using GM instruments
+- doesn't understand SMAF files converted from SMF
+- with OPL2 output it sounds bad
+- with OPL3 output it sounds really bad
+- testing with BlueGrass.mmf, Carousel.mmf and MachineWoman.mmf
 
-work in progress
 
 TODO:
 

@@ -171,7 +171,7 @@ static unsigned char *play_midi_event(unsigned char *buf)
 		midi_set_instrument(bl, prg);
 	} else if (bh == 0xe0) {
 		int bend;
-		printf("TRK%02x Pitchbend ", bl);
+		printf("\nTRK%02x Pitchbend ", bl);
 		bend = read16_be(buf);
 		buf += 2;
 		printf("%04x\n", bend);

@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.7 2004/07/02 23:59:12 cmatsuoka Exp $
+# $Id: Makefile,v 1.8 2004/07/03 00:32:50 cmatsuoka Exp $
 
 TOPDIR	= ../..
 
@@ -9,7 +9,7 @@ XOBJS	= gm_ibk.o drum_ibk.o
 DFILES	= Makefile $(OBJS:.o=.c) $(XDEPS) ymf262.h opl3.h sbi.h \
 	  gm.ibk gmopl.ibk drum.ibk
 CFILES	= $(LIB) readsbi readibk
-DCFILES	=
+DCFILES	= gm_ibk.c drum_ibk.c
 DDIRS	=
 LIBS	=
 LIB	= libopl3.a
