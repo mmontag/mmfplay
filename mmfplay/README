@@ -1,4 +1,4 @@
-$Id: README,v 1.4 2004/07/03 00:32:50 cmatsuoka Exp $
+$Id: README,v 1.5 2004/07/05 02:25:56 cmatsuoka Exp $
 
 MMFplay - A player for SMAF files
 
@@ -7,7 +7,7 @@ Current status:
 
 - tested in Linux
 - compiles on Linux, Solaris and BSD
-- plays MA-3 SMAF files using GM instruments
+- plays MA-3 SMAF files using GM instruments in YMF262 (4OP and 2OP modes)
 - doesn't understand SMAF files converted from SMF
 - with OPL2 output it sounds bad
 - with OPL3 output it sounds really bad
@@ -16,8 +16,8 @@ Current status:
 
 TODO:
 
-- fix ymf262 output
 - check possibility of converting ymu762 tones to ymf262
+- build a ymu762 emulator
 - support smaf files converted from smf
 - support multi-track midi
 - implement midi controllers
