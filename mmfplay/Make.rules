@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.3 2004/06/30 03:21:01 cmatsuoka Exp $
+# $Id: Make.rules,v 1.4 2004/06/30 03:36:43 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall
@@ -46,7 +46,7 @@ ifdef DDIRS
 	for i in $(DDIRS) $(XDDIRS); do \
 		mkdir $(DISTDIR)/$$i; \
 		( cd $$i; \
-		if [ -f $(MAKEFILE) ]; then \
+		if [ -f Makefile ]; then \
 			$(MAKE) VERSION=$(VERSION) DISTDIR=../$(DISTDIR)/$$i \
 			subdist; \
 		else \
@@ -62,8 +62,8 @@ depend: Makefile
 	@$(CC) $(CFLAGS) $(XCFLAGS) -M $(OBJS:.o=.c) $(XDEPS) >$@
 
 Make.conf:
-	@case `uname -s` in			\
-	  Linux)	SOUND=oss;;		\
+	@case `uname -o` in			\
+	  *Linux)	SOUND=oss;;		\
 	  Solaris)	SOUND=solaris;;		\
 	esac;					\
 	echo "SOUND_DRIVER=$$SOUND" >$@;	\

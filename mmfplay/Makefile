@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.2 2004/06/30 03:21:01 cmatsuoka Exp $
+# $Id: Makefile,v 1.3 2004/06/30 03:36:43 cmatsuoka Exp $
 
 TOPDIR	= .
 
@@ -11,7 +11,7 @@ DDIRS	= doc src
 
 all:
 	for i in $(DDIRS); do \
-		(cd $$i; [ -f $(MAKEFILE) ] && $(MAKE) $@) \
+		(cd $$i; [ -f Makefile ] && $(MAKE) $@) \
 	done; true
 
 dist:
