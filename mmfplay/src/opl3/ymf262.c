@@ -2471,7 +2471,7 @@ static int OPL3TimerOver(OPL3 *chip,int c)
 
 #if (BUILD_YMF262)
 
-#define MAX_OPL3_CHIPS 2
+#define MAX_OPL3_CHIPS 4
 
 static OPL3 *YMF262[MAX_OPL3_CHIPS];	/* array of pointers to the YMF262's */
 static int YMF262NumChips = 0;				/* number of chips */
@@ -2796,8 +2796,7 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 	}
 	for( i=0; i < length ; i++ )
 	{
-		int a,b,c,d;
-
+		int a;
 
 		advance_lfo(chip);
 
@@ -2867,112 +2866,39 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 		chan_calc(&chip->P_CH[16]);
 		chan_calc(&chip->P_CH[17]);
 #endif
-//profiler_mark(PROFILER_END);
 
-
-
-//profiler_mark(PROFILER_USER2);
 		/* accumulator register set #1 */
 		a =  chanout[0] & chip->pan[0];
-		b =  chanout[0] & chip->pan[1];
-		c =  chanout[0] & chip->pan[2];
-		d =  chanout[0] & chip->pan[3];
-#if 1
 		a += chanout[1] & chip->pan[4];
-		b += chanout[1] & chip->pan[5];
-		c += chanout[1] & chip->pan[6];
-		d += chanout[1] & chip->pan[7];
 		a += chanout[2] & chip->pan[8];
-		b += chanout[2] & chip->pan[9];
-		c += chanout[2] & chip->pan[10];
-		d += chanout[2] & chip->pan[11];
 
 		a += chanout[3] & chip->pan[12];
-		b += chanout[3] & chip->pan[13];
-		c += chanout[3] & chip->pan[14];
-		d += chanout[3] & chip->pan[15];
 		a += chanout[4] & chip->pan[16];
-		b += chanout[4] & chip->pan[17];
-		c += chanout[4] & chip->pan[18];
-		d += chanout[4] & chip->pan[19];
 		a += chanout[5] & chip->pan[20];
-		b += chanout[5] & chip->pan[21];
-		c += chanout[5] & chip->pan[22];
-		d += chanout[5] & chip->pan[23];
 
 		a += chanout[6] & chip->pan[24];
-		b += chanout[6] & chip->pan[25];
-		c += chanout[6] & chip->pan[26];
-		d += chanout[6] & chip->pan[27];
 		a += chanout[7] & chip->pan[28];
-		b += chanout[7] & chip->pan[29];
-		c += chanout[7] & chip->pan[30];
-		d += chanout[7] & chip->pan[31];
 		a += chanout[8] & chip->pan[32];
-		b += chanout[8] & chip->pan[33];
-		c += chanout[8] & chip->pan[34];
-		d += chanout[8] & chip->pan[35];
 
 		/* accumulator register set #2 */
 		a += chanout[9] & chip->pan[36];
-		b += chanout[9] & chip->pan[37];
-		c += chanout[9] & chip->pan[38];
-		d += chanout[9] & chip->pan[39];
 		a += chanout[10] & chip->pan[40];
-		b += chanout[10] & chip->pan[41];
-		c += chanout[10] & chip->pan[42];
-		d += chanout[10] & chip->pan[43];
 		a += chanout[11] & chip->pan[44];
-		b += chanout[11] & chip->pan[45];
-		c += chanout[11] & chip->pan[46];
-		d += chanout[11] & chip->pan[47];
 
 		a += chanout[12] & chip->pan[48];
-		b += chanout[12] & chip->pan[49];
-		c += chanout[12] & chip->pan[50];
-		d += chanout[12] & chip->pan[51];
 		a += chanout[13] & chip->pan[52];
-		b += chanout[13] & chip->pan[53];
-		c += chanout[13] & chip->pan[54];
-		d += chanout[13] & chip->pan[55];
 		a += chanout[14] & chip->pan[56];
-		b += chanout[14] & chip->pan[57];
-		c += chanout[14] & chip->pan[58];
-		d += chanout[14] & chip->pan[59];
 
 		a += chanout[15] & chip->pan[60];
-		b += chanout[15] & chip->pan[61];
-		c += chanout[15] & chip->pan[62];
-		d += chanout[15] & chip->pan[63];
 		a += chanout[16] & chip->pan[64];
-		b += chanout[16] & chip->pan[65];
-		c += chanout[16] & chip->pan[66];
-		d += chanout[16] & chip->pan[67];
 		a += chanout[17] & chip->pan[68];
-		b += chanout[17] & chip->pan[69];
-		c += chanout[17] & chip->pan[70];
-		d += chanout[17] & chip->pan[71];
-#endif
+
 		a >>= FINAL_SH;
-		b >>= FINAL_SH;
-		c >>= FINAL_SH;
-		d >>= FINAL_SH;
 
 		/* limit check */
 		a = limit( a , MAXOUT, MINOUT );
-		b = limit( b , MAXOUT, MINOUT );
-		c = limit( c , MAXOUT, MINOUT );
-		d = limit( d , MAXOUT, MINOUT );
-
-		#ifdef SAVE_SAMPLE
-		if (which==0)
-		{
-			SAVE_ALL_CHANNELS
-		}
-		#endif
 
 		/* store to sound buffer */
-		a = (a + b + c + d) >> 1;
 		if (reset_buffer)
 			*ch_a = a;
 		else
@@ -2980,7 +2906,6 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 
 		ch_a++;
 
-//profiler_mark(PROFILER_END);
 
 		advance(chip);
 	}
