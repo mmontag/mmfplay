@@ -26,7 +26,7 @@ static void register_device(struct list_head *head, struct device *dev)
 	list_add_tail(&d->list, head);
 }
 
-static void init_device()
+static void init_sound_device()
 {
 	struct list_head *h;
 	struct device_list *d;
@@ -48,12 +48,19 @@ static void init_device()
 	}
 }
 
-int init_sound()
+static void init_sound_driver()
 {
-	printf("Initializing sound driver...\n");
+	printf("Initializing sound driver... ");
 	snd_buffer = calloc (2, BUFFER_SIZE);
 	__init_sound();
-	init_device();
+	printf("[%s] ", SOUND_DRIVER);		/* Not daisy-chained */
+	printf("\n");
+}
+
+int init_sound()
+{
+	init_sound_driver();
+	init_sound_device();
 	printf("Sound output: %s\n", snd->description);
 	snd->init(snd_buffer);
 	printf("Sound device: %s\n", dev->description);
