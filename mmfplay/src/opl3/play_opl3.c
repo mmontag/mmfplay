@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 #include "mmfplay.h"
@@ -154,7 +155,7 @@ static void opl3_update()
 {
 	int c, i;
 
-	for (c = 0; c < 6 /*SEQUENCER_CHANNELS*/; c++) {
+	for (c = 0; c < SEQUENCER_CHANNELS; c++) {
 
 		if (channel[c].ins != OPL3_INS(c)) {
 			if (channel[c].newkey) {
@@ -170,7 +171,8 @@ static void opl3_update()
 		/* update opl */
 	}
 
-	for (i = 0; i < 1 /*NUM_CHIPS*/; i++) {
+	memset(snd_buffer, 0, sizeof(SINT16) * BUFFER_SIZE);
+	for (i = 0; i < NUM_CHIPS; i++) {
 		YMF262UpdateOne(i, snd_buffer, BUFFER_SIZE);
 	}
 }

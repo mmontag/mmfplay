@@ -45,7 +45,7 @@ if (track[trk].status & TRK_STATUS_PERC)
 	else
 		time = track[trk].timer0;
 
-	printf("midi_note_on(trk=%d,note=%d,vel=%d,time=%d)\n", trk, note, vel, time);
+	/*printf("midi_note_on(trk=%d,note=%d,vel=%d,time=%d)\n", trk, note, vel, time);*/
 	seq_set_instrument(c, track[trk].ins);
 	seq_set_volume(c, vel);
 	seq_set_note(c, note, time, trk);

@@ -2971,12 +2971,16 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length)
 		}
 		#endif
 
+#if 0
 		/* store to sound buffer */
 		ch_a[i] = a;
 		ch_a[i] += b;
 		ch_a[i] += c;
 		ch_a[i] += d;
 		//ch_a[i] >>= 3;
+#endif
+		a = a + b + c + d;
+		ch_a[i] += a;
 
 //profiler_mark(PROFILER_END);
 
