@@ -84,7 +84,7 @@ int read_sbi(unsigned char *buf, const int size)
 		printf(" } },\t/* OP4 */\n");
 
 		printf("\t0x%02x, 0x%02x, 0x%02x, 0x%02x\n",
-			sbi->A.fb_alg, sbi->B.fb_alg, sbi->fix_dur, sbi->dpitch);
+			sbi->A.fb_alg, sbi->B.fb_alg, sbi->fix_dur, sbi->fix_key);
 		printf("      }");
 
 		buf += ins_size;

@@ -21,22 +21,16 @@ struct instrument_2op {
 
 struct sbi {
 	char magic[4];
-	char name[29];
-	char fix_dur;
-	char modes;			
-	char dpitch;
-	struct instrument_2op A;
-	struct instrument_2op B;
-#if 0
-	char res[2];
+	char name[25];
 	char echo_delay;		/* Extended attributes from sbiload */
 	char echo_atten;
 	char chorus_spread;
 	char trans;
 	char fix_dur;
-	char modes;
+	char modes;			
 	char fix_key;
-#endif
+	struct instrument_2op A;
+	struct instrument_2op B;
 };
 
 #define SBI_2OP 0
