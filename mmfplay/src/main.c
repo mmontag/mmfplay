@@ -15,8 +15,8 @@
 #include "sound.h"
 
 
-static struct chunk_info *chunk_head = NULL;
-static struct chunk_info *chunk16_head = NULL;
+static LIST_HEAD(chunk_head);
+static LIST_HEAD(chunk16_head);
 
 unsigned char *handle_chunk(unsigned char *buffer, int tsz, int *sz)
 {
@@ -35,7 +35,7 @@ unsigned char *handle_chunk(unsigned char *buffer, int tsz, int *sz)
 		print_text("Size: %d\n", size);
 	}
 
-	process_chunk(chunk_head, id, buffer, size);
+	process_chunk(&chunk_head, id, buffer, size);
 
 	return buffer + size;
 }
@@ -70,7 +70,7 @@ unsigned char *handle_chunk16(unsigned char *buffer, int tsz, int *sz)
 		print_text("Size: %d\n", size);
 	}
 
-	process_chunk(chunk16_head, id, buffer, size);
+	process_chunk(&chunk16_head, id, buffer, size);
 
 	return buffer + size;
 }
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 	printf("MMFplay version " VERSION "\n");
 
 	if (opt.mode == MMFPLAY_SHOW) {
-		printf("\nMMF file structure for %s\n", argv[1]);
+		printf("\nMMF file structure for %s\n", argv[optind]);
 
 		register_chunk(&chunk_head, "MMMD", 4, show_mmmd);
 		register_chunk(&chunk_head, "CNTI", 4, show_cnti);
