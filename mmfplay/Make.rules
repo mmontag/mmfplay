@@ -1,7 +1,7 @@
-# $Id: Make.rules,v 1.10 2004/06/30 15:18:03 cmatsuoka Exp $
+# $Id: Make.rules,v 1.11 2004/06/30 17:28:48 cmatsuoka Exp $
 
 CC	= gcc
-CFLAGS	= -g -O0 -Wall
+CFLAGS	= -g -O0 -Wall -DINLINE=inline
 LD	= gcc
 LDFLAGS	= -g
 RANLIB	= ranlib

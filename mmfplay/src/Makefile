@@ -1,15 +1,15 @@
-# $Id: Makefile,v 1.5 2004/06/30 13:40:00 cmatsuoka Exp $
+# $Id: Makefile,v 1.6 2004/06/30 17:28:48 cmatsuoka Exp $
 
 TOPDIR	= ..
 
 XCFLAGS	= -DVERSION=\"$(VERSION)\" -DUSERNAME=\"$(USERNAME)\"
 OBJS	= show.o play.o smaf.o tree.o chunk.o main.o gmmap.o sound.o \
-	  playmidi.o sequencer.o mixer.o options.o getopt_long.o
-DFILES	= Makefile $(OBJS:.o=.c) chunk.h list.h mixer.h mmfplay.h play.h \
+	  playmidi.o sequencer.o options.o getopt_long.o
+DFILES	= Makefile $(OBJS:.o=.c) chunk.h list.h mmfplay.h play.h \
 	  show.h smaf.h sound.h tree.h sequencer.h device.h getopt.h
 CFILES	=
 DCFILES	=
-DDIRS	= sound opl3
+DDIRS	= sound opl3 buzzer
 LIBS	= -Lopl3 -lopl3 -Lsound -lsound -lm
 BIN	= mmfplay
 

@@ -4,6 +4,7 @@
 
 
 struct device {
+	char *name;
         char *description;
         int (*init)(void);
         void (*deinit)(void);

@@ -17,6 +17,7 @@ static void opl3_deinit(void);
 static void opl3_update(void);
 
 struct device dev_opl3 = {
+	"opl3",
 	"YMF262 (OPL3) output device",
 	opl3_init,
 	opl3_deinit,

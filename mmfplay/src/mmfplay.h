@@ -38,7 +38,6 @@ int parse_cli(int, char **);
 
 #define cmp4(x,a,b,c,d) (x[0]==(a) && x[1]==(b) && x[2]==(c) && x[3]==(d))
 
-
 #endif
 
 
