@@ -1,10 +1,10 @@
-# $Id: Makefile,v 1.3 2004/06/30 03:36:43 cmatsuoka Exp $
+# $Id: Makefile,v 1.4 2004/06/30 15:18:03 cmatsuoka Exp $
 
 TOPDIR	= .
 
 PKGNAME	= mmfplay
 DIST	= $(PKGNAME)-$(VERSION)
-DFILES	= Makefile Make.rules Version README
+DFILES	= Makefile Make.rules Version README genconf.sh
 CFILES	=
 DDIRS	= doc src
 
