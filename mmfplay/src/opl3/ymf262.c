@@ -2976,7 +2976,7 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length)
 		ch_a[i] += b;
 		ch_a[i] += c;
 		ch_a[i] += d;
-		ch_a[i] >>= 3;
+		//ch_a[i] >>= 3;
 
 //profiler_mark(PROFILER_END);
 

@@ -33,7 +33,7 @@ extern char *gm_ins[128];
 unsigned char *read_chunk(unsigned char *, int);
 unsigned char *read_chunk16(unsigned char *, int);
 
-void play_midi(unsigned char *, int);
+void play_midi(unsigned char *, int, unsigned char *);
 int parse_cli(int, char **);
 
 #define cmp4(x,a,b,c,d) (x[0]==(a) && x[1]==(b) && x[2]==(c) && x[3]==(d))

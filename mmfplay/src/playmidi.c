@@ -15,6 +15,7 @@ struct midi_track {
 	int ins;
 	int bend;
 	int timer0;
+	int status;
 };
 
 struct mmfplay mmf;
@@ -29,6 +30,9 @@ static void midi_note_on(int trk, int note, int vel, int time)
 		return;
 
 	assert(trk < MIDI_TRACKS);
+
+if (track[trk].status & TRK_STATUS_PERC)
+	return;
 
 	if (vel > 63)
 		vel = 63;
@@ -199,12 +203,17 @@ static unsigned char *play_midi_tick(int tick, unsigned char *buf)
 }
 
 
-void play_midi(unsigned char *buf, int size)
+void play_midi(unsigned char *buf, int size, unsigned char *trk_status)
 {
 	int timer = 0;
 	unsigned char *oldbuf, *b_end;
+	int i;
 
 	b_end = buf + size;
+
+	for (i = 0; i < MIDI_TRACKS; i++) {
+		track[i].status = trk_status[i];
+	}
 
 	seq_init();
 

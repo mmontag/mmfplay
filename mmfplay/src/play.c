@@ -8,6 +8,9 @@
 #include "play.h"
 
 
+static unsigned char trk_status[16];
+
+
 void play_mmmd(unsigned char *buf, int size)
 {
 	printf("SMAF file loaded\n");
@@ -89,6 +92,7 @@ void play_mtrx(unsigned char *buf, int size)
 	printf(" smaf: timebase: D:%d G:%d\n", mmf.time_d, mmf.time_g);
 
 	if (fmt == 2) {
+		memcpy(trk_status, buf, 16);
 		buf += 16;
 		size -= 16;
 	}
@@ -122,7 +126,7 @@ void play_mtsq(unsigned char *buf, int size)
 {
 	printf(" smaf: %d bytes in sequence data chunk\n", size);
 
-	play_midi(buf, size);
+	play_midi(buf, size, trk_status);
 }
 
 
