@@ -145,7 +145,7 @@ static void set_ins(int c, int n, int v)
 	}
 
 	opl3_write_chan(c, OPL3_REG_FB_ALG, 0x30 | ins->fb_algA);
-	//opl3_write_chan(c, OPL3_REG_FB_ALG + 3, 0x30 | ins->fb_algB);
+	opl3_write_chan(c, OPL3_REG_FB_ALG + 3, 0x30 | ins->fb_algB);
 
 	if (is_drum)
 		set_note(c, ins->dpitch ? ins->dpitch : 60);

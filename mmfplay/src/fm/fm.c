@@ -1739,7 +1739,6 @@ static void OPL3ResetChip(OPL3 *chip)
 
 	chip->noise_rng = 1;	/* noise shift register */
 
-#if 0
 	/* reset with register write */
 	OPL3WriteReg(chip,0x01,0); /* test register */
 	OPL3WriteReg(chip,0x02,0); /* Timer1 */
@@ -1756,7 +1755,6 @@ static void OPL3ResetChip(OPL3 *chip)
 //FIX IT (dont change CH.D, CH.C, CH.B and CH.A in C0-C8 registers)
 	for(c = 0x1ff ; c >= 0x120 ; c-- )
 		OPL3WriteReg(chip,c,0);
-#endif
 
 
 
