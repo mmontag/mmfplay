@@ -1,25 +1,28 @@
 #!/bin/sh
 #
 # Poor man's autoconf
-# $Id: genconf.sh,v 1.3 2004/07/01 10:58:32 cmatsuoka Exp $
+# $Id: genconf.sh,v 1.4 2004/07/01 11:30:53 cmatsuoka Exp $
 
 OS=`uname -s`
+TMPOUT=tmpout.$$
+
+has_header() {
+	echo "#include <$1>"|cpp > $TMPOUT
+	return $?
+}
 
 case $OS in
 *Linux)
 	SOUND=oss
-	CFLAGS="-DHAS_GETOPT_LONG"
 	;;
 SunOS)
 	SOUND=solaris
 	;;
 FreeBSD)
 	SOUND=freebsd
-	CFLAGS="-DHAS_GETOPT_LONG"
 	;;
 NetBSD|OpenBSD)
 	SOUND=bsd
-	CFLAGS="-DHAS_GETOPT_LONG"
 	;;
 Darwin)
 	SOUND=macos
@@ -33,10 +36,21 @@ Darwin)
 	SOUND=`uname -s|tr A-Z a-z`;;
 esac
 
+has_header "getopt.h" && CFLAGS="$CFLAGS -DHAS_GETOPT_LONG"
+
+rm -f $TMPOUT
+
 test -n "$CC" && echo "CC = $CC"
 test -n "$LD" && echo "LD = $LD"
-echo "SOUND_DRIVER = $SOUND"
-echo "AUTO_CFLAGS = $CFLAGS"
-echo "AUTO_LDFLAGS = $LDFLAGS"
-echo "AUTO_LIBS = $LIBS"
-echo "USERNAME = `whoami`@`hostname`"
+
+cat <<EOF
+# generated with `basename $0` \$Version$
+# on `uname -srm` (`uname -n`)
+# `date`
+SOUND_DRIVER = $SOUND
+AUTO_CFLAGS = $CFLAGS
+AUTO_LDFLAGS = $LDFLAGS
+AUTO_LIBS = $LIBS
+USERNAME = `whoami`@`hostname`
+EOF
+
