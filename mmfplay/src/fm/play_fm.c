@@ -13,16 +13,16 @@
 #define OSD_CPU_H
 #include "ymf262.h"
 
-static int opl3_init(void);
-static void opl3_deinit(void);
-static void opl3_update(void);
+static int fm_init(void);
+static void fm_deinit(void);
+static void fm_update(void);
 
 struct device dev_fm = {
 	"fm",
 	"YMF262 (OPL3) output device",
-	opl3_init,
-	opl3_deinit,
-	opl3_update
+	fm_init,
+	fm_deinit,
+	fm_update
 };
 
 #define NUM_CHIPS (((SEQUENCER_CHANNELS - 1)/OPL3_VOICES) + 1)
@@ -144,7 +144,7 @@ static void set_ins(int c, int n, int v)
 		channel[c].timer = ins->fix_dur;
 }
 
-static int opl3_init()
+static int fm_init()
 {
 	int i;
 
@@ -167,12 +167,12 @@ static int opl3_init()
 	return 0;
 }
 
-static void opl3_deinit()
+static void fm_deinit()
 {
 	YMF262Shutdown();
 }
 
-static void opl3_update()
+static void fm_update()
 {
 	int c, i;
 
