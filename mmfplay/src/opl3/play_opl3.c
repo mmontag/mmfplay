@@ -165,9 +165,10 @@ static void opl3_update()
 		/* update opl */
 	}
 
-	memset(snd_buffer, 0, sizeof(SINT16) * BUFFER_SIZE);
-	for (i = 0; i < NUM_CHIPS; i++) {
-		YMF262UpdateOne(i, snd_buffer, BUFFER_SIZE);
+	//memset(snd_buffer, 0, sizeof(SINT16) * BUFFER_SIZE);
+	YMF262UpdateOne(0, snd_buffer, BUFFER_SIZE, 1);
+	for (i = 1; i < NUM_CHIPS; i++) {
+		YMF262UpdateOne(i, snd_buffer, BUFFER_SIZE, 0);
 	}
 }
 

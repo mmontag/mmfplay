@@ -2774,7 +2774,7 @@ void YMF262UpdateOne(int which, INT16 **buffers, int length)
 
 /* Added for MMFplay */
 
-void YMF262UpdateOne(int which, INT16 *ch_a, int length)
+void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 {
 	OPL3		*chip  = YMF262[which];
 	UINT8		rhythm = chip->rhythm&0x20;
@@ -2971,16 +2971,14 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length)
 		}
 		#endif
 
-#if 0
 		/* store to sound buffer */
-		ch_a[i] = a;
-		ch_a[i] += b;
-		ch_a[i] += c;
-		ch_a[i] += d;
-		//ch_a[i] >>= 3;
-#endif
 		a = (a + b + c + d) >> 1;
-		ch_a[i] += a;
+		if (reset_buffer)
+			*ch_a = a;
+		else
+			*ch_a += a;
+
+		ch_a++;
 
 //profiler_mark(PROFILER_END);
 

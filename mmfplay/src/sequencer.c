@@ -43,14 +43,26 @@ static void show_channel_data()
 
 int seq_alloc_channel()
 {
-	int i;
+	int i, min, imin;
+
+	min = ~0L;
+	imin = 0;
 
 	for (i = 0; i < SEQUENCER_CHANNELS; i++) {
+		if (channel[i].timer < min) {
+			min = channel[i].timer;
+			imin = i;
+		}
 		if (channel[i].track == -1)
 			return i;
 	}
 
-	return -1;
+	/* No free channel */
+	channel[imin].timer = 0;
+	channel[imin].track = -1;
+	channels_in_use--;
+
+	return imin;
 }
 
 void seq_set_instrument(int c, int ins)
@@ -95,6 +107,9 @@ void seq_init()
 
 	channels_in_use = 0;
 	tick_counter = 0;
+
+	printf("Initializing sequencer...\n");
+	printf(" seq: %d voices\n", SEQUENCER_CHANNELS);
 
 	for (i = 0; i < SEQUENCER_CHANNELS; i++) {
 		channel[i].track = -1;

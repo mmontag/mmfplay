@@ -1,13 +1,15 @@
-# $Id: Make.rules,v 1.14 2004/07/01 10:58:32 cmatsuoka Exp $
+# $Id: Make.rules,v 1.15 2004/07/01 21:33:20 cmatsuoka Exp $
 
 CC	= gcc
-CFLAGS	= -g -O0 -Wall -DINLINE=inline $(XCFLAGS) $(AUTO_CFLAGS)
+CFLAGS	= -g -O3 -Wall -DINLINE=inline $(XCFLAGS) $(AUTO_CFLAGS)
 LD	= gcc
 LDFLAGS	= -g $(AUTO_LDFLAGS)
 RANLIB	= ranlib
 SHELL	= /bin/sh
-CONF	= $(TOPDIR)/Make.conf
 MAKEFILE= Makefile
+
+CONF	= $(TOPDIR)/Make.conf
+GENCONF	= $(TOPDIR)/genconf.sh
 
 
 include $(CONF)
@@ -67,9 +69,9 @@ depend: $(MAKEFILE)
 	@$(CC) $(CFLAGS) -M $(OBJS:.o=.c) $(XDEPS) >$@
 
 # Poor man's autoconf
-$(CONF):
+$(CONF): $(GENCONF)
 	@rm -f $@
-	$(TOPDIR)/genconf.sh > $@
+	$(GENCONF) > $@
 	
 include $(TOPDIR)/Version
 
