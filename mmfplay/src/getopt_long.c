@@ -83,6 +83,11 @@ static void warnx(int print_error, const char *fmt, ...)
 	}
 }
 
+#else
+
+/* FIXME */
+#define warnx printf
+
 #endif //_WIN32
 
 /* not part of the original file */

@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.5 2004/06/30 12:16:03 cmatsuoka Exp $
+# $Id: Make.rules,v 1.6 2004/06/30 13:11:31 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall
@@ -7,6 +7,7 @@ LDFLAGS	= -g
 RANLIB	= ranlib
 SHELL	= /bin/sh
 CONF	= $(TOPDIR)/Make.conf
+MAKEFILE= Makefile
 
 
 include $(CONF)
@@ -34,7 +35,7 @@ ifdef DDIRS
 	done; true
 endif
 
-$(OBJS): Makefile $(CONF)
+$(OBJS): $(MAKEFILE) $(CONF)
 
 $(LIB): $(LIB)($(OBJS))
 	$(RANLIB) $(LIB)
@@ -47,7 +48,7 @@ ifdef DDIRS
 	for i in $(DDIRS) $(XDDIRS); do \
 		mkdir $(DISTDIR)/$$i; \
 		( cd $$i; \
-		if [ -f Makefile ]; then \
+		if [ -f $(MAKEFILE) ]; then \
 			$(MAKE) VERSION=$(VERSION) DISTDIR=../$(DISTDIR)/$$i \
 			subdist; \
 		else \
@@ -58,7 +59,7 @@ ifdef DDIRS
 	done
 endif
 
-depend: Makefile
+depend: $(MAKEFILE)
 	@echo Building dependencies...
 	@$(CC) $(CFLAGS) $(XCFLAGS) $(XXCFLAGS) -M $(OBJS:.o=.c) $(XDEPS) >$@
 
