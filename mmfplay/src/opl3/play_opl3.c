@@ -108,9 +108,9 @@ static void set_note(int c, int n)
 	n = n - 36;
 
 	oct = n / 12;
-	freq = 55.0 * pow(2.0, 1.0*n/12.0);
+	freq = 66.0 * pow(2.0, 1.0*n/12.0);
 	printf("freq = %d\n", freq);
-	block = 3 + oct;
+	block = 10 + oct;
 
 	fnum = freq << (20 - block) / 49716;
 	
@@ -161,7 +161,7 @@ static void opl3_update()
 {
 	int c, i;
 
-	for (c = 0; c < 2 /*SEQUENCER_CHANNELS*/; c++) {
+	for (c = 0; c < 6 /*SEQUENCER_CHANNELS*/; c++) {
 
 		if (channel[c].ins != OPL3_INS(c)) {
 			/* set new instrument */

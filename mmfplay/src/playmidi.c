@@ -14,6 +14,7 @@ struct midi_track {
 	int vol;
 	int ins;
 	int bend;
+	int timer0;
 };
 
 struct mmfplay mmf;
@@ -29,16 +30,23 @@ static void midi_note_on(int trk, int note, int vel, int time)
 
 	assert(trk < MIDI_TRACKS);
 
+if (trk > 0) return;
+
 	if (vel > 63)
 		vel = 63;
 
 	if (time > 0)
 		time /= mmf.time_g;
 
+	if (time >= 0)
+		track[trk].timer0 = time;
+	else
+		time = track[trk].timer0;
+
 	printf("midi_note_on(trk=%d,note=%d,vel=%d,time=%d)\n", trk, note, vel, time);
-	seq_set_instrument(c, track[trk].ins, time, trk);
+	seq_set_instrument(c, track[trk].ins);
 	seq_set_volume(c, vel);
-	seq_set_note(c, note);
+	seq_set_note(c, note, time, trk);
 }
 
 static void midi_set_instrument(int trk, int ins)
@@ -118,7 +126,7 @@ static unsigned char *play_midi_event(unsigned char *buf)
 		n = *buf++;
 	} else if (bh == 0x80) {
 		int note, vel, i;
-		printf("CH%02x Note On: ", bl);
+		printf("track %02x Note On: ", bl);
 		note = *buf++;
 		buf = read_varlen(buf, &vel, &i);
 		printf("Note %02x Vel %02x\n", note, vel);
@@ -127,7 +135,7 @@ static unsigned char *play_midi_event(unsigned char *buf)
 
 	} else if (bh == 0x90) {
 		int note, vel, time, i;
-		printf("CH%02x Note On: ", bl);
+		printf("track %02x Note On: ", bl);
 		note = *buf++;
 		buf = read_varlen(buf, &vel, &i);
 		buf = read_varlen(buf, &time, &i);
@@ -150,14 +158,14 @@ static unsigned char *play_midi_event(unsigned char *buf)
 		printf(" value %02x\n", val);
 	} else if (bh == 0xc0) {
 		int prg;
-		printf("CH%02x Program ", bl);
+		printf("track %02x Program ", bl);
 		prg = *buf++;
 		printf("%02x (%s)\n", prg, gm_ins[prg]);
 
 		midi_set_instrument(bl, prg);
 	} else if (bh == 0xe0) {
 		int bend;
-		printf("CH%02x Pitchbend ", bl);
+		printf("track %02x Pitchbend ", bl);
 		bend = read16_be(buf);
 		buf += 2;
 		printf("%04x\n", bend);

@@ -1,4 +1,5 @@
 
+#include <stdio.h>
 #include <string.h>
 
 #include "mmfplay.h"
@@ -23,6 +24,17 @@ static void decrement_channel_timer()
 	}
 }
 
+static void show_channel_data()
+{
+	int i;
+
+	for (i = 0; i < 6 /*SEQUENCER_CHANNELS*/; i++) {
+		printf("%02x %02x %02x | ", channel[i].note,
+			channel[i].ins, channel[i].timer);
+	}
+	printf("\n");
+}
+
 int seq_alloc_channel()
 {
 	int i;
@@ -35,14 +47,9 @@ int seq_alloc_channel()
 	return -1;
 }
 
-void seq_set_instrument(int c, int ins, int timer, int track)
+void seq_set_instrument(int c, int ins)
 {
 	channel[c].ins = ins;
-	if (timer >= 0)
-		channel[c].timer0 = channel[c].timer = timer;
-	else
-		channel[c].timer = channel[c].timer0;
-	channel[c].track = track;
 }
 
 void seq_set_volume(int c, int i)
@@ -50,14 +57,18 @@ void seq_set_volume(int c, int i)
 	channel[c].vol = i;
 }
 
-void seq_set_note(int c, int i)
+void seq_set_note(int c, int i, int timer, int track)
 {
+	printf("SEQ: ch%d, note %d\n", c, i);
 	channel[c].note = i;
+	channel[c].timer = timer;
+	channel[c].track = track;
 	channel[c].newkey = 1;
 }
 
 void seq_tick()
 {
+	show_channel_data();
 	decrement_channel_timer();
 }
 

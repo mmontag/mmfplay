@@ -11,7 +11,6 @@ struct seq_channel {
 	int note;
 	int bend;
 	int timer;
-	int timer0;
 	int phase;
 	int track;
 	int newkey;
@@ -20,9 +19,9 @@ struct seq_channel {
 extern struct seq_channel channel[SEQUENCER_CHANNELS];
 
 int seq_alloc_channel(void);
-void seq_set_instrument(int c, int ins, int timer, int track);
+void seq_set_instrument(int c, int ins);
 void seq_set_volume(int c, int i);
-void seq_set_note(int c, int i);
+void seq_set_note(int c, int i, int timer, int track);
 void seq_tick(void);
 void seq_init(void);
 
