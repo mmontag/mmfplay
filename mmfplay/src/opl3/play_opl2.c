@@ -84,6 +84,11 @@ static void set_note(int c, int n)
 	
 }
 
+static void stop_note(int c)
+{
+	opl2_write_chan(c, OPL3_REG_CH_KEY_BLOCK, 0);
+}
+
 static void set_ins(int c, int n, int v)
 {
 	int i;
@@ -114,16 +119,11 @@ static void set_ins(int c, int n, int v)
 		set_note(c, ins->dpitch ? ins->dpitch : 60);
 }
 
-static void stop_note(int c)
-{
-	opl2_write_chan(c, OPL3_REG_CH_KEY_BLOCK, 0);
-}
-
 static int opl2_init()
 {
 	int i;
 
-	printf(" dev: OPL2 driver by claudio@helllabs.org\n");
+	printf(" dev: OPL3/2OP driver by claudio@helllabs.org\n");
 	printf(" dev: YMF262 FM sound emulator by Jarek Burczynski\n");
 	printf(" dev: initializing %d YMF262 chips\n", NUM_CHIPS);
 	YMF262Init(NUM_CHIPS, 8000000, 22050);
@@ -153,8 +153,7 @@ static void opl2_update()
 
 	for (c = 0; c < SEQUENCER_CHANNELS; c++) {
 		if (channel[c].newkey) {
-			if (channel[c].note > 0)
-				set_note(c, channel[c].note);
+			set_note(c, channel[c].note);
 			set_ins(c, channel[c].ins, channel[c].vol);
 			channel[c].newkey = 0;
 		}

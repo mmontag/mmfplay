@@ -19,6 +19,7 @@ struct opl3_instrument {
 	struct opl2_operator op[4];
 	unsigned char fb_algA;
 	unsigned char fb_algB;
+	unsigned char dpitch;
 };
 
 struct opl2_instrument {
@@ -54,6 +55,7 @@ struct opl2_instrument {
 
 
 extern struct opl3_instrument opl3_ins[128];
+extern struct opl3_instrument opl3_drum[128];
 
 extern struct opl2_instrument opl2_ins[128];
 extern struct opl2_instrument opl2_drum[128];

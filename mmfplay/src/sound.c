@@ -33,19 +33,21 @@ static void init_sound_device()
 	struct device_list *d;
 
 	printf("Initializing sound devices... ");
-	register_device(&dev_head, &dev_opl2);
 	register_device(&dev_head, &dev_opl3);
+	register_device(&dev_head, &dev_opl2);
 	register_device(&dev_head, &dev_buzzer);
 
 	list_for_each (h, &dev_head, next) {
 		d = list_entry(h, struct device_list, list);
-		printf("[%s] ", d->dev->name);
+		printf("[%s]", d->dev->name);
 	}
 	printf("\n");
 
 	list_for_each (h, &dev_head, next) {
 		d = list_entry(h, struct device_list, list);
-		dev = d->dev;
+printf("comparing %s %s\n", d->dev->name,opt.device);
+		if (!strcmp(d->dev->name,opt.device))
+			dev = d->dev;
 		break;
 	}
 }

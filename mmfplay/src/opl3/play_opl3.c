@@ -29,6 +29,7 @@ struct device dev_opl3 = {
 #define OPL3_CHIP(c) ((c)/OPL3_VOICES)
 #define OPL3_CHAN(c) ((c)%OPL3_VOICES)
 
+static int opl3_op_mode[SEQUENCER_CHANNELS];
 
 /* YMF262 registers */
 
@@ -69,25 +70,20 @@ static int opl3_chn[OPL3_VOICES] = {
 	_opl3_write(OPL3_CHIP(c),OPL3_REG_CHN(OPL3_CHAN(c),b),d)
 
 
-static void set_ins(int c, int n, int v)
+static void set_type(int c, int t)
 {
-	int i;
-	struct opl3_instrument *ins;
+	int i, j, x;
 
-	/*printf("channel %d set instrument %d\n", c, n);*/
+	opl3_op_mode[c] = t;
 
-	ins = &opl3_ins[n];
-
-	for (i = 0; i < 4; i++) {
-		opl3_write_op(c, i, OPL3_REG_OP_FLG_MUL, flg_mul);
-		opl3_write_op(c, i, OPL3_REG_OP_KSL_TL, ksl_tl);
-		opl3_write_op(c, i, OPL3_REG_OP_AR_DR, ar_dr);
-		opl3_write_op(c, i, OPL3_REG_OP_SL_RR, sl_rr);
-		opl3_write_op(c, i, OPL3_REG_OP_WS, ws);
+	for (i = 0; i < NUM_CHIPS; i++) {
+		for (x = j = 0; j < OPL3_VOICES; j++) {
+			x <<= 1;
+			if (opl3_op_mode[j] == OPL3_TYPE_4OP)
+				x |= 1;
+		}
+		_opl3_write(i, 0x104, x);
 	}
-
-	opl3_write_chan(c, OPL3_REG_FB_ALG, 0x30 | ins->fb_algA);
-	opl3_write_chan(c, OPL3_REG_FB_ALG + 3, 0x30 | ins->fb_algB);
 }
 
 static void set_note(int c, int n)
@@ -112,6 +108,39 @@ static void stop_note(int c)
 	opl3_write_chan(c, OPL3_REG_CH_KEY_BLOCK, 0);
 }
 
+static void set_ins(int c, int n, int v)
+{
+	int i;
+	int is_drum;
+	struct opl3_instrument *ins;
+
+	/*printf("channel %d set instrument %d\n", c, n);*/
+
+	is_drum = ((n & 0x80) == 0x80);
+	n &= 0x7f;
+
+	if (is_drum)
+		ins = &opl3_drum[n];
+	else
+		ins = &opl3_ins[n];
+
+	set_type(c, ins->type);
+
+	for (i = 0; i < 4; i++) {
+		opl3_write_op(c, i, OPL3_REG_OP_FLG_MUL, flg_mul);
+		opl3_write_op(c, i, OPL3_REG_OP_KSL_TL, ksl_tl);
+		opl3_write_op(c, i, OPL3_REG_OP_AR_DR, ar_dr);
+		opl3_write_op(c, i, OPL3_REG_OP_SL_RR, sl_rr);
+		opl3_write_op(c, i, OPL3_REG_OP_WS, ws);
+	}
+
+	opl3_write_chan(c, OPL3_REG_FB_ALG, 0x30 | ins->fb_algA);
+	opl3_write_chan(c, OPL3_REG_FB_ALG + 3, 0x30 | ins->fb_algB);
+
+	if (is_drum)
+		set_note(c, ins->dpitch ? ins->dpitch : 60);
+}
+
 static int opl3_init()
 {
 	int i;
@@ -126,8 +155,9 @@ static int opl3_init()
 		printf("#%d ", i);
 		YMF262ResetChip(i);
 		_opl3_write(i, 0x01, 0x20);	/* Enable waveform selection */
-		_opl3_write(i, 0x104, 0x3f);	/* Enable 4-op mode */
+		_opl3_write(i, 0xbd, 0xc0);	/* Set tremolo/vibrato depth */
 		_opl3_write(i, 0x105, 0x01);	/* Enable OPL3 mode */
+		opl3_op_mode[i] = OPL3_TYPE_4OP;
 	}
 	printf("\n");
 
@@ -144,7 +174,6 @@ static void opl3_update()
 	int c, i;
 
 	for (c = 0; c < SEQUENCER_CHANNELS; c++) {
-
 		if (channel[c].newkey) {
 			set_note(c, channel[c].note);
 			set_ins(c, channel[c].ins, channel[c].vol);
@@ -160,4 +189,5 @@ static void opl3_update()
 		YMF262UpdateOne(i, snd_buffer, BUFFER_SIZE, 0);
 	}
 }
+
 

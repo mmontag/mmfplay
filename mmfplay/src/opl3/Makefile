@@ -1,10 +1,10 @@
-# $Id: Makefile,v 1.8 2004/07/03 00:32:50 cmatsuoka Exp $
+# $Id: Makefile,v 1.9 2004/07/05 02:20:44 cmatsuoka Exp $
 
 TOPDIR	= ../..
 
 XCFLAGS	= -DHAS_YMF262 -I..
 XDEPS	= readsbi.c readibk.c
-OBJS	= play_opl3.o play_opl2.o ymf262.o std_o3.o
+OBJS	= play_opl3.o play_opl2.o ymf262.o std_o3.o drums_o3.o
 XOBJS	= gm_ibk.o drum_ibk.o
 DFILES	= Makefile $(OBJS:.o=.c) $(XDEPS) ymf262.h opl3.h sbi.h \
 	  gm.ibk gmopl.ibk drum.ibk

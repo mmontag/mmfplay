@@ -24,7 +24,8 @@ static void help(int argc, char **argv)
 	"\n");
 
 	printf(
-"Usage: %s [-Vhs] <mmf_file>\n"
+"Usage: %s [-Vhs -Ddevice] <mmf_file>\n"
+"	-D --device	Choose output device\n"
 "	-h --help	Show list of command line options\n"
 "	-s --show	Show structure of MMF file\n"
 "	-V --version	Show version\n"
@@ -38,6 +39,7 @@ int parse_cli (int argc, char **argv)
 
 #define OPTIONS "Vhs"
 	static struct option lopt[] = {
+		{ "device",		1, 0, 'D' },
 		{ "version",		0, 0, 'V' },
 		{ "help",		0, 0, 'h' },
 		{ "show",		0, 0, 's' }
@@ -46,12 +48,16 @@ int parse_cli (int argc, char **argv)
 	/* Set defaults */
 	memset (&opt, 0, sizeof (struct options));
 	opt.mode = MMFPLAY_PLAY;
+	opt.device = "opl3"; 
 
 	while ((o = getopt_long(argc, argv, OPTIONS, lopt, &optidx)) != -1) {
 		switch (o) {
 		case 'V':
 			printf("mmfplay " VERSION "\n");
 			exit(0);
+		case 'D':
+			opt.device = strdup(optarg);
+			break;
 		case 's':
 			opt.mode = MMFPLAY_SHOW;
 			break;

@@ -20,7 +20,7 @@ int read_sbi(unsigned char *buf, const int size)
 {
 	unsigned char *b_end;
 	struct sbi *sbi;
-	int type, n;
+	int n;
 
 	b_end = buf + size;
 
@@ -42,13 +42,11 @@ int read_sbi(unsigned char *buf, const int size)
 		printf("      { ");
 
 		if (cmp4(buf, '4', 'O', 'P', 0x1a)) {
-			type = SBI_4OP;
-			/*opl3_ins[n].type = OPL3_TYPE_4OP;*/
 			printf("OPL3_TYPE_4OP,");
 		} else if (cmp4(buf, '2', 'O', 'P', 0x1a)) {
-			type = SBI_2OP;
-			/*opl3_ins[n].type = OPL3_TYPE_2OP;*/
 			printf("OPL3_TYPE_2OP,");
+		} else {
+			printf("-1,");
 		}
 
 		printf ("\t/* %3d: %-20.20s */\n", n, sbi->name);
@@ -86,9 +84,13 @@ int read_sbi(unsigned char *buf, const int size)
 		printf(" } },\t/* OP4 */\n");
 
 		printf("\t0x%02x, 0x%02x\n", sbi->A.fb_alg, sbi->B.fb_alg);
-		printf("      },\n");
+		printf("      }");
 
 		buf += ins_size;
+
+		if (buf < b_end) printf(",");
+
+		printf("\n");
 	}
 
 	printf("};\n");
