@@ -1,10 +1,13 @@
 
-#ifndef __OPL3_H
-#define __OPL3_H
+#ifndef __FM_H
+#define __FM_H
 
 
+#ifdef UNROLL
+#define OPL3_VOICES 16
+#else
 #define OPL3_VOICES 6
-#define OPL2_VOICES 18
+#endif
 
 struct opl2_operator {
 	unsigned char flg_mul;
@@ -20,12 +23,6 @@ struct opl3_instrument {
 	unsigned char fb_algA;
 	unsigned char fb_algB;
 	unsigned char fix_dur;
-	unsigned char dpitch;
-};
-
-struct opl2_instrument {
-	struct opl2_operator op[2];
-	unsigned char fb_alg;
 	unsigned char dpitch;
 };
 
@@ -57,9 +54,6 @@ struct opl2_instrument {
 
 extern struct opl3_instrument opl3_ins[128];
 extern struct opl3_instrument opl3_drum[128];
-
-extern struct opl2_instrument opl2_ins[128];
-extern struct opl2_instrument opl2_drum[128];
 
 #endif
 

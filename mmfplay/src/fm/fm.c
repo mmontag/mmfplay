@@ -107,19 +107,9 @@ typedef struct{
 	UINT32	ksl_base;	/* KeyScaleLevel Base step		*/
 	UINT8	kcode;		/* key code (for key scaling)		*/
 
-	/*
-	   there are 12 2-operator channels which can be combined in pairs
-	   to form six 4-operator channel, they are:
-		0 and 3,
-		1 and 4,
-		2 and 5,
-		9 and 12,
-		10 and 13,
-		11 and 14
-	*/
-	UINT8	extended;	/* set to 1 if this channel forms up a 4op channel with another channel(only used by first of pair of channels, ie 0,1,2 and 9,10,11) */
-
+	UINT8	extended;	/* set to 1 if 4op channel		*/
 } OPL3_CH;
+
 
 /* OPL3 state */
 typedef struct {
@@ -143,8 +133,6 @@ typedef struct {
 	UINT32	noise_rng;		/* 23 bit noise shift register	*/
 	UINT32	noise_p;		/* current noise 'phase'	*/
 	UINT32	noise_f;		/* current noise period		*/
-
-	//UINT8	OPL3_mode;		/* OPL3 extension enable flag	*/
 
 	UINT32	address;		/* address register		*/
 
@@ -474,12 +462,11 @@ static const INT8 lfo_pm_table[8*8*2] = {
 
 
 /* work table */
-static void *cur_chip = NULL;			/* current chip point */
-//static OPL3_SLOT *SLOT7_1,*SLOT7_2,*SLOT8_1,*SLOT8_2;
+static void *cur_chip = NULL;		/* current chip point */
 
-static signed int phase_modulation;		/* phase modulation input (SLOT 2) */
+static signed int phase_modulation;	/* phase modulation input (SLOT 2) */
 static signed int phase_modulation2;	/* phase modulation input (SLOT 3 in 4 operator channels) */
-static signed int chanout[FM_CHANNELS];		/* 18 channels */
+static signed int chanout[FM_CHANNELS];	/* 18 channels */
 
 
 static UINT32	LFO_AM;
@@ -1024,26 +1011,20 @@ INLINE void set_mul(OPL3 *chip,int slot,int v)
 		{
 		case 0: case 1: case 2:
 		case 9: case 10: case 11:
-			if (CH->extended)
-			{
+			if (CH->extended) {
 				/* normal */
 				CALC_FCSLOT(CH,SLOT);
-			}
-			else
-			{
+			} else {
 				/* normal */
 				CALC_FCSLOT(CH,SLOT);
 			}
 		break;
 		case 3: case 4: case 5:
 		case 12: case 13: case 14:
-			if ((CH-3)->extended)
-			{
+			if ((CH-3)->extended) {
 				/* update this SLOT using frequency data for 1st channel of a pair */
 				CALC_FCSLOT(CH-3,SLOT);
-			}
-			else
-			{
+			} else {
 				/* normal */
 				CALC_FCSLOT(CH,SLOT);
 			}
@@ -1095,26 +1076,20 @@ INLINE void set_ksl_tl(OPL3 *chip,int slot,int v)
 		{
 		case 0: case 1: case 2:
 		case 9: case 10: case 11:
-			if (CH->extended)
-			{
+			if (CH->extended) {
 				/* normal */
 				SLOT->TLL = SLOT->TL + (CH->ksl_base>>SLOT->ksl);
-			}
-			else
-			{
+			} else {
 				/* normal */
 				SLOT->TLL = SLOT->TL + (CH->ksl_base>>SLOT->ksl);
 			}
 		break;
 		case 3: case 4: case 5:
 		case 12: case 13: case 14:
-			if ((CH-3)->extended)
-			{
+			if ((CH-3)->extended) {
 				/* update this SLOT using frequency data for 1st channel of a pair */
 				SLOT->TLL = SLOT->TL + ((CH-3)->ksl_base>>SLOT->ksl);
-			}
-			else
-			{
+			} else {
 				/* normal */
 				SLOT->TLL = SLOT->TL + (CH->ksl_base>>SLOT->ksl);
 			}
@@ -1192,6 +1167,14 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				UINT8 prev;
 
 /* UNROLL fix */
+#ifdef UNROLL
+				int i;
+
+				for (i = 0; i < FM_CHANNELS; i++) {
+					CH = &chip->P_CH[i];	/* channel 0 */
+					CH->extended = 1; //(v>>0) & 1;
+				}
+#else
 				CH = &chip->P_CH[0];		/* channel 0 */
 				prev = CH->extended;
 				CH->extended = (v>>0) & 1;
@@ -1215,6 +1198,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				CH++;				/* channel 11 */
 				prev = CH->extended;
 				CH->extended = (v>>5) & 1;
+#endif
 
 			}
 			return;
@@ -1299,16 +1283,14 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				//if this is 2nd channel forming up 4-op channel just do nothing
 				//else normal 2 operator function keyon/off
 #ifdef UNROLL
-				
 				action = (v & 0x20) ? 1 : ~1;
-				
 				
 				if (FIRST_SET(chan_no)) {
 					FM_KEYON (&CH->SLOT[SLOT1], action);
 					FM_KEYON (&CH->SLOT[SLOT2], action);
 					if (CH->extended) {
 						FM_KEYON (&CH2->SLOT[SLOT1], action);
-						FM_KEYON (&CH2)->SLOT[SLOT2], action);
+						FM_KEYON (&CH2->SLOT[SLOT2], action);
 					}
 				} else {
 					if ((CH - SET2_OFFSET)->extended) {
@@ -1514,11 +1496,13 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 
 		{
 			int chan_no = (r&0x0f) + ch_offset;
+printf("reg 0xc0: chan = %d\n", chan_no);
 
 #ifdef UNROLL
 			if (FIRST_SET(chan_no)) {
 				if (CH->extended) {
 					UINT8 conn = (CH->SLOT[SLOT1].CON<<1) || ((CH+3)->SLOT[SLOT1].CON<<0);
+printf("first set: extended: conn = %d\n", conn);
 					switch(conn) {
 					case 0:
 						/* 1 -> 2 -> 3 -> 4 - out */
@@ -1755,6 +1739,7 @@ static void OPL3ResetChip(OPL3 *chip)
 
 	chip->noise_rng = 1;	/* noise shift register */
 
+#if 0
 	/* reset with register write */
 	OPL3WriteReg(chip,0x01,0); /* test register */
 	OPL3WriteReg(chip,0x02,0); /* Timer1 */
@@ -1771,6 +1756,7 @@ static void OPL3ResetChip(OPL3 *chip)
 //FIX IT (dont change CH.D, CH.C, CH.B and CH.A in C0-C8 registers)
 	for(c = 0x1ff ; c >= 0x120 ; c-- )
 		OPL3WriteReg(chip,c,0);
+#endif
 
 
 
@@ -1778,8 +1764,7 @@ static void OPL3ResetChip(OPL3 *chip)
 	for( c = 0 ; c < FM_CHANNELS ; c++ )
 	{
 		OPL3_CH *CH = &chip->P_CH[c];
-		for(s = 0 ; s < 2 ; s++ )
-		{
+		for(s = 0 ; s < 2 ; s++ ) {
 			CH->SLOT[s].state     = EG_OFF;
 			CH->SLOT[s].volume    = MAX_ATT_INDEX;
 		}
@@ -2015,3 +2000,35 @@ void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 
 }
 
+#ifdef UNROLL
+
+static int regs[FM_CHANNELS][4] = {
+	{  0,  1, 32, 33 }, 
+	{  2,  3, 34, 35 }, 
+	{  4,  5, 36, 37 }, 
+	{  6,  7, 38, 39 }, 
+	{  8,  9, 40, 41 }, 
+	{ 10, 11, 42, 43 }, 
+	{ 12, 13, 44, 45 }, 
+	{ 14, 15, 46, 47 }, 
+	{ 16, 17, 48, 49 }, 
+	{ 18, 19, 50, 51 }, 
+	{ 20, 21, 52, 53 }, 
+	{ 22, 23, 54, 55 }, 
+	{ 24, 25, 56, 57 }, 
+	{ 26, 27, 58, 59 }, 
+	{ 28, 29, 60, 61 }, 
+	{ 30, 31, 62, 63 } 
+};
+
+void fm_set_parameter(int which, int chan, int operator, int reg, int value)
+{
+	printf("chip %d, channel %d, operator %d, regbase %02x, value %02x\n",
+		which, chan, operator, reg, value);
+	printf("poke %02x, %02x\n", reg + regs[chan][operator], value);
+	YMF262Write(which, 0, reg + regs[chan][operator]);
+	YMF262Write(which, 1, value);
+}
+
+
+#endif

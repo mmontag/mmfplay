@@ -61,6 +61,7 @@ int seq_alloc_channel()
 	channel[imin].timer = 0;
 	channel[imin].track = -1;
 	channels_in_use--;
+	printf("** No free channel! Freeing %d **\n", imin);
 
 	return imin;
 }

@@ -33,8 +33,8 @@ static int opl3_op_mode[SEQUENCER_CHANNELS];
 
 #ifdef UNROLL
 
-#define opl3_write_op(c,o,b,d)	fm_set_parameter(OPL3_CHIP(c),o,b,ins->op[o].d)
-#define opl3_write_chan(c,b,d)	fm_set_parameter(OPL3_CHIP(c),0,b,d)
+#define opl3_write_op(c,o,b,d)	fm_set_parameter(OPL3_CHIP(c),OPL3_CHAN(c),o,b,ins->op[o].d)
+#define opl3_write_chan(c,b,d)	fm_set_parameter(OPL3_CHIP(c),OPL3_CHAN(c),0,b,d)
 
 #else
 
@@ -123,7 +123,7 @@ static void set_ins(int c, int n, int v)
 	int is_drum;
 	struct opl3_instrument *ins;
 
-	/*printf("channel %d set instrument %d\n", c, n);*/
+	printf("channel %d set instrument %d\n", c, n);
 
 	is_drum = ((n & 0x80) == 0x80);
 	n &= 0x7f;
@@ -145,7 +145,7 @@ static void set_ins(int c, int n, int v)
 	}
 
 	opl3_write_chan(c, OPL3_REG_FB_ALG, 0x30 | ins->fb_algA);
-	opl3_write_chan(c, OPL3_REG_FB_ALG + 3, 0x30 | ins->fb_algB);
+	//opl3_write_chan(c, OPL3_REG_FB_ALG + 3, 0x30 | ins->fb_algB);
 
 	if (is_drum)
 		set_note(c, ins->dpitch ? ins->dpitch : 60);
