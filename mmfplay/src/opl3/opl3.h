@@ -4,7 +4,7 @@
 
 
 #define OPL3_VOICES 6
-#define OPL2_VOICES 17
+#define OPL2_VOICES 18
 
 struct opl2_operator {
 	unsigned char flg_mul;
@@ -42,6 +42,16 @@ struct opl2_instrument {
 #define OPL3_REG_FB_ALG		0xc0
 
 #define OPL3_BASE		0x220
+
+
+#define _opl3_write(c,a,v) do { \
+	int b = OPL3_BASE; \
+	if (a & 0xff00) b += 2; \
+	/*printf(" opl3: %02x %02x %02x\n", c, a, v);*/ \
+	YMF262Write(c, b, a); \
+	YMF262Write(c, ++b, v); \
+} while (0)
+
 
 extern struct opl3_instrument opl3_ins[128];
 extern struct opl2_instrument opl2_ins[128];

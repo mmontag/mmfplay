@@ -32,11 +32,9 @@ struct device dev_opl2 = {
 
 /* YMF262 registers */
 
-static int opl2_op[4][OPL2_VOICES] = {
-	 { 0,  1,  2,  18, 19, 20 },
-	 { 3,  4,  5,  21, 22, 23 },
-	 { 6,  7,  8,  24, 25, 26 },
-	 { 9, 10, 11,  27, 28, 29 }
+static int opl2_op[2][OPL2_VOICES] = {
+	 { 0,  1,  2,  6,  7,  8, 12, 13, 14, 18, 19, 20, 24, 25, 26, 30, 31, 32 },
+	 { 3,  4,  5,  9, 10, 11, 15, 16, 17, 21, 22, 23, 27, 28, 29, 33, 34, 35 }
 };
 
 static int opl2_reg[] = {
@@ -54,27 +52,14 @@ static int opl2_reg[] = {
 /* For regbase 0x20, 0x40, 0x60, 0x80 and 0xe0 */
 #define OPL2_REG_OP(chn,o,base) ((opl2_reg[opl2_op[o][chn]])+(base))
 
-static int opl2_chn[OPL2_VOICES] = {
-	0x000, 0x001, 0x002, /*0x003, 0x004, 0x005, 0x006, 0x007, 0x008,*/
-	0x100, 0x101, 0x102, /*0x103, 0x104, 0x105, 0x106, 0x107, 0x108*/
-};
-
 /* For regbase 0xa0, 0xb0 and 0xc0 */
-#define OPL2_REG_CHN(chn,base) (opl2_chn[chn]+(base))
-
-#define _opl2_write(c,a,v) do { \
-	int b = OPL3_BASE; \
-	if (a & 0xff00) b += 2; \
-	/*printf(" opl2: %02x %02x %02x\n", c, a, v);*/ \
-	YMF262Write(c, b, a); \
-	YMF262Write(c, ++b, v); \
-} while (0)
+#define OPL2_REG_CHN(chn,base) (opl2_op[0][chn]+(base))
 
 #define opl2_write_op(c,o,b,d) \
-	_opl2_write(OPL2_CHIP(c),OPL2_REG_OP(OPL2_CHAN(c),o,b),ins->op[o].d)
+	_opl3_write(OPL2_CHIP(c),OPL2_REG_OP(OPL2_CHAN(c),o,b),ins->op[o].d)
 
 #define opl2_write_chan(c,b,d) \
-	_opl2_write(OPL2_CHIP(c),OPL2_REG_CHN(OPL2_CHAN(c),b),d)
+	_opl3_write(OPL2_CHIP(c),OPL2_REG_CHN(OPL2_CHAN(c),b),d)
 
 
 static void set_ins(int c, int n, int v)
@@ -132,9 +117,9 @@ static int opl2_init()
 	for (i = 0; i < NUM_CHIPS; i++) {
 		printf("#%d ", i);
 		YMF262ResetChip(i);
-		_opl2_write(i, 0x01, 0x20);	/* Enable waveform selection */
-		_opl2_write(i, 0x104, 0x3f);	/* Enable 4-op mode */
-		_opl2_write(i, 0x105, 0x01);	/* Enable OPL2 mode */
+		_opl3_write(i, 0x01, 0x20);	/* Enable waveform selection */
+		_opl3_write(i, 0x104, 0x00);	/* Disable 4-op mode */
+		_opl3_write(i, 0x105, 0x00);	/* Disable OPL3 mode */
 	}
 	printf("\n");
 

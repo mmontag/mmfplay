@@ -62,14 +62,6 @@ static int opl3_chn[OPL3_VOICES] = {
 /* For regbase 0xa0, 0xb0 and 0xc0 */
 #define OPL3_REG_CHN(chn,base) (opl3_chn[chn]+(base))
 
-#define _opl3_write(c,a,v) do { \
-	int b = OPL3_BASE; \
-	if (a & 0xff00) b += 2; \
-	/*printf(" opl3: %02x %02x %02x\n", c, a, v);*/ \
-	YMF262Write(c, b, a); \
-	YMF262Write(c, ++b, v); \
-} while (0)
-
 #define opl3_write_op(c,o,b,d) \
 	_opl3_write(OPL3_CHIP(c),OPL3_REG_OP(OPL3_CHAN(c),o,b),ins->op[o].d)
 
