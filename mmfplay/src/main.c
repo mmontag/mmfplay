@@ -120,8 +120,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	printf("MMFplay version " VERSION " (built "
-		__DATE__ " " __TIME__ " by " USERNAME ")\n");
+	printf("MMFplay version " VERSION "\n");
 
 	if (opt.mode == MMFPLAY_SHOW) {
 		printf("\nMMF file structure for %s\n", argv[1]);

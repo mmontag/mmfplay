@@ -10,7 +10,15 @@ struct options opt;
 
 static void help(int argc, char **argv)
 {
-	fprintf (stdout,
+	printf(
+"MMFplay version " VERSION " (built " __DATE__ " " __TIME__ " by " USERNAME ")\n"
+"Copyright (C) 2004 Claudio Matsuoka\n"
+#ifndef HAS_GETOPT_LONG
+"Portions Copyright (C) 2000 The NetBSD Foundation, Inc. All rights reserved.\n"
+#endif
+	"\n");
+
+	printf(
 "Usage: %s [-Vhs] <mmf_file>\n"
 "	-h --help	Show list of command line options\n"
 "	-s --show	Show structure of MMF file\n"

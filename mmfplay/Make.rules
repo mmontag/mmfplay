@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.4 2004/06/30 03:36:43 cmatsuoka Exp $
+# $Id: Make.rules,v 1.5 2004/06/30 12:16:03 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall
@@ -6,12 +6,13 @@ LD	= gcc
 LDFLAGS	= -g
 RANLIB	= ranlib
 SHELL	= /bin/sh
+CONF	= $(TOPDIR)/Make.conf
 
 
-include $(TOPDIR)/Make.conf
+include $(CONF)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(XCFLAGS) -o$*.o $<
+	$(CC) -c $(CFLAGS) $(XCFLAGS) $(XXCFLAGS) -o$*.o $<
 
 dummy:
 
@@ -33,7 +34,7 @@ ifdef DDIRS
 	done; true
 endif
 
-$(OBJS): Makefile
+$(OBJS): Makefile $(CONF)
 
 $(LIB): $(LIB)($(OBJS))
 	$(RANLIB) $(LIB)
@@ -59,14 +60,19 @@ endif
 
 depend: Makefile
 	@echo Building dependencies...
-	@$(CC) $(CFLAGS) $(XCFLAGS) -M $(OBJS:.o=.c) $(XDEPS) >$@
+	@$(CC) $(CFLAGS) $(XCFLAGS) $(XXCFLAGS) -M $(OBJS:.o=.c) $(XDEPS) >$@
 
-Make.conf:
-	@case `uname -o` in			\
-	  *Linux)	SOUND=oss;;		\
-	  Solaris)	SOUND=solaris;;		\
-	esac;					\
-	echo "SOUND_DRIVER=$$SOUND" >$@;	\
+# Poor man's autoconf
+$(CONF):
+	@rm -f $@
+	@case `uname -o` in				\
+	*Linux)						\
+		SOUND=oss;				\
+		echo "XXCFLAGS=-DHAS_GETOPT_LONG">>$@;;	\
+	Solaris)					\
+		SOUND=solaris;;				\
+	esac;						\
+	echo "SOUND_DRIVER=$$SOUND">>$@;		\
 	echo "USERNAME=`whoami`@`hostname`">>$@
 	
 include $(TOPDIR)/Version
@@ -74,5 +80,4 @@ include $(TOPDIR)/Version
 ifdef OBJS
 include depend
 endif
-
 
