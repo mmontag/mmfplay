@@ -31,6 +31,9 @@ static void midi_note_on(int trk, int note, int vel, int time)
 
 	assert(trk < MIDI_TRACKS);
 
+	if (opt.solotrk && trk != opt.solotrk - 1)
+		return;
+
 	/*printf("midi_note_on(trk=%d,note=%d,vel=%d,time=%d)\n", trk, note, vel, time);*/
 
 	if (track[trk].status & TRK_STATUS_PERC) {
@@ -157,7 +160,7 @@ static unsigned char *play_midi_event(unsigned char *buf)
 
 	} else if (bh == 0xb0) {
 		int ctr, val;
-		printf("TRK%02x Controller: ", bl);
+		/*printf("TRK%02x Controller: ", bl);*/
 		ctr = *buf++;
 		val = *buf++;
 		switch (ctr) {

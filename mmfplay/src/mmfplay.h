@@ -7,6 +7,7 @@ struct options {
 #define MMFPLAY_SHOW	1
 	int mode;
 	int perc;
+	int solotrk;
 	char *device;
 };
 
