@@ -1,3 +1,4 @@
+$Id: AUTHORS,v 1.2 2004/06/30 12:20:20 cmatsuoka Exp $
 
 MMFplay code
 
@@ -18,9 +19,21 @@ From Sarien (http://sarien.sf.net)
 * Paul Hill <paul@lagernet.clara.co.uk>
   - Amiga sound driver
 
+* Felipe Rosinha (in memoriam)
+  - Win32 sound driver
+
 
 From M.A.M.E. (http://mame.net)
 
 * Jarek Burczynski
   - YMF262 emulator
+
+
+From other sources
+
+* Dieter Baron and Thomas Klausner (contributed to NetBSD)
+  - getopt_long() implementation
+
+* Brandon Lee
+  - port of getopt_long() to Win32
 
