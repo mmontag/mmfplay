@@ -4,7 +4,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#ifdef HAS_GETOPT_LONG
 #include <getopt.h>
+#else
+#include "getopt.h"
+#endif
 
 struct options opt;
 
