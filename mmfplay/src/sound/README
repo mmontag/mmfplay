@@ -1,0 +1,7 @@
+$Id: README,v 1.1 2004/06/30 01:40:05 cmatsuoka Exp $
+
+This directory contains several sound drivers from Sarien
+(http://sarien.sf.net).
+
+Only the OSS driver (sound_oss.c) has been tested.
+
