@@ -153,11 +153,8 @@ static void opl3_update()
 		if (channel[c].timer == 0) {
 			stop_note(c);
 		}
-
-		/* update opl */
 	}
 
-	//memset(snd_buffer, 0, sizeof(SINT16) * BUFFER_SIZE);
 	YMF262UpdateOne(0, snd_buffer, BUFFER_SIZE, 1);
 	for (i = 1; i < NUM_CHIPS; i++) {
 		YMF262UpdateOne(i, snd_buffer, BUFFER_SIZE, 0);

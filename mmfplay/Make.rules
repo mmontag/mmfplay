@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.16 2004/07/01 23:50:04 cmatsuoka Exp $
+# $Id: Make.rules,v 1.17 2004/07/02 21:04:01 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O3 -Wall -DINLINE=inline $(XCFLAGS) $(AUTO_CFLAGS)
@@ -37,12 +37,12 @@ ifdef DDIRS
 	done; true
 endif
 
-$(BIN): $(OBJS)
+$(BIN): $(OBJS) $(XOBJS)
 	$(LD) $(LDFLAGS) -o $@ $+ $(LIBS) $(AUTO_LIBS)
 
 $(OBJS): $(MAKEFILE) $(CONF)
 
-$(LIB): $(LIB)($(OBJS))
+$(LIB): $(LIB)($(OBJS) $(XOBJS))
 	$(RANLIB) $(LIB)
 
 $(LIB): $(OBJS)

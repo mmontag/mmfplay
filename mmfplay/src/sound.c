@@ -33,8 +33,8 @@ static void init_sound_device()
 	struct device_list *d;
 
 	printf("Initializing sound devices... ");
-	register_device(&dev_head, &dev_opl3);
 	register_device(&dev_head, &dev_opl2);
+	register_device(&dev_head, &dev_opl3);
 	register_device(&dev_head, &dev_buzzer);
 
 	list_for_each (h, &dev_head, next) {

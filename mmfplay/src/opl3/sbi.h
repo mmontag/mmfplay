@@ -5,7 +5,7 @@
 #define SBI_INS_2OP	0
 #define SBI_INS_4OP	1
 
-struct sbi_ins {
+struct instrument_2op {
 	unsigned char m_flg_mul;
 	unsigned char c_flg_mul;
 	unsigned char m_ksl_tl;
@@ -22,8 +22,8 @@ struct sbi_ins {
 struct sbi {
 	char magic[4];
 	char name[32];
-	struct sbi_ins A;
-	struct sbi_ins B;
+	struct instrument_2op A;
+	struct instrument_2op B;
 };
 
 #define SBI_2OP 0
@@ -31,6 +31,14 @@ struct sbi {
 #define SBI_2OP_SIZE 42
 #define SBI_4OP_SIZE 60
 
+
+struct ibk {
+	struct instrument_2op i;
+	unsigned char percvoc;	/* Percussion voice number */
+        char transpos;		/* Number of notes to transpose timbre */
+        unsigned char dpitch;	/* percussion pitch: MIDI Note 0 - 127 */
+        unsigned char rsv[2];	/* unsused - so far */
+};
 
 #endif
 

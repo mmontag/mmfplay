@@ -89,7 +89,6 @@ unsigned char *read_chunk16(unsigned char *buffer, int size)
 	return buffer;
 }
 
-
 int main(int argc, char **argv)
 {
 	FILE *f;

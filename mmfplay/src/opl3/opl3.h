@@ -22,7 +22,6 @@ struct opl3_instrument {
 };
 
 struct opl2_instrument {
-	int type;
 	struct opl2_operator op[2];
 	unsigned char fb_alg;
 };
