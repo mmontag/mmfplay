@@ -67,26 +67,6 @@ static int opl2_ch[OPL2_VOICES] = {
 	_opl3_write(OPL2_CHIP(c),OPL2_REG_CHN(OPL2_CHAN(c),b),d)
 
 
-static void set_ins(int c, int n, int v)
-{
-	int i;
-	struct opl2_instrument *ins;
-
-	/*printf("channel %d set instrument %d\n", c, n);*/
-
-	ins = &opl2_ins[n];
-
-	for (i = 0; i < 2; i++) {
-		opl2_write_op(c, i, OPL3_REG_OP_FLG_MUL, flg_mul);
-		opl2_write_op(c, i, OPL3_REG_OP_KSL_TL, ksl_tl);
-		opl2_write_op(c, i, OPL3_REG_OP_AR_DR, ar_dr);
-		opl2_write_op(c, i, OPL3_REG_OP_SL_RR, sl_rr);
-		opl2_write_op(c, i, OPL3_REG_OP_WS, ws);
-	}
-
-	opl2_write_chan(c, OPL3_REG_FB_ALG, 0x30 | ins->fb_alg);
-}
-
 static void set_note(int c, int n)
 {
 	int fnum, freq, block;
@@ -102,6 +82,36 @@ static void set_note(int c, int n)
 	opl2_write_chan(c, OPL3_REG_CH_KEY_BLOCK,
 		(1 << 5) | ((block & 0x07) << 2) | ((fnum & 0x300) >> 8));
 	
+}
+
+static void set_ins(int c, int n, int v)
+{
+	int i;
+	int is_drum;
+	struct opl2_instrument *ins;
+
+	/*printf("channel %d set instrument %d\n", c, n);*/
+
+	is_drum = ((n & 0x80) == 0x80);
+	n &= 0x7f;
+
+	if (is_drum)
+		ins = &opl2_drum[n];
+	else
+		ins = &opl2_ins[n];
+
+	for (i = 0; i < 2; i++) {
+		opl2_write_op(c, i, OPL3_REG_OP_FLG_MUL, flg_mul);
+		opl2_write_op(c, i, OPL3_REG_OP_KSL_TL, ksl_tl);
+		opl2_write_op(c, i, OPL3_REG_OP_AR_DR, ar_dr);
+		opl2_write_op(c, i, OPL3_REG_OP_SL_RR, sl_rr);
+		opl2_write_op(c, i, OPL3_REG_OP_WS, ws);
+	}
+
+	opl2_write_chan(c, OPL3_REG_FB_ALG, 0x30 | ins->fb_alg);
+
+	if (is_drum)
+		set_note(c, ins->dpitch ? ins->dpitch : 60);
 }
 
 static void stop_note(int c)
@@ -142,7 +152,8 @@ static void opl2_update()
 
 	for (c = 0; c < SEQUENCER_CHANNELS; c++) {
 		if (channel[c].newkey) {
-			set_note(c, channel[c].note);
+			if (channel[c].note > 0)
+				set_note(c, channel[c].note);
 			set_ins(c, channel[c].ins, channel[c].vol);
 			channel[c].newkey = 0;
 		}

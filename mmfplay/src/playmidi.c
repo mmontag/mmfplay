@@ -31,9 +31,6 @@ static void midi_note_on(int trk, int note, int vel, int time)
 
 	assert(trk < MIDI_TRACKS);
 
-	if (track[trk].status & TRK_STATUS_PERC)
-		return;
-
 	if (vel > 63)
 		vel = 63;
 
@@ -46,6 +43,12 @@ static void midi_note_on(int trk, int note, int vel, int time)
 		time = track[trk].timer0;
 
 	/*printf("midi_note_on(trk=%d,note=%d,vel=%d,time=%d)\n", trk, note, vel, time);*/
+
+	if (track[trk].status & TRK_STATUS_PERC) {
+		/*printf("PERC: %d: %d\n", trk, note);*/
+		track[trk].ins = 0x80 + note;
+		note = -1;
+	}
 
 	seq_set_instrument(c, track[trk].ins);
 	seq_set_volume(c, vel);

@@ -53,7 +53,7 @@ int read_ibk(unsigned char *buf, const int size, char *name)
 		printf("0x%02x", ibk->i.m_ws);
 		printf(" } },\t/* OP2 */\n");
 
-		printf("\t0x%02x\n", ibk->i.fb_alg);
+		printf("\t0x%02x, 0x%02x\n", ibk->i.fb_alg, ibk->dpitch);
 		printf("      }");
 
 		if (n < 127)
