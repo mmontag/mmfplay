@@ -72,7 +72,7 @@ static void set_ins(int c, int n, int v)
 	int i;
 	struct opl2_instrument *ins;
 
-	/*printf("channel %d set instrument %d\n", c, n);*/
+	printf("channel %d set instrument %d\n", c, n);
 
 	ins = &opl2_ins[n];
 
@@ -123,16 +123,10 @@ static int opl2_init()
 		printf("#%d ", i);
 		YMF262ResetChip(i);
 		_opl3_write(i, 0x01, 0x20);	/* Enable waveform selection */
-#if 0
 		_opl3_write(i, 0x104, 0x00);	/* Disable 4-op mode */
-		_opl3_write(i, 0x105, 0x00);	/* Disable OPL3 mode */
-#endif
+		_opl3_write(i, 0x105, 0x01);	/* Disable OPL3 mode */
 	}
 	printf("\n");
-
-//set_ins(14,0,40);
-//set_note(14,60);
-//exit(0);
 
 	return 0;
 }
@@ -147,7 +141,6 @@ static void opl2_update()
 	int c, i;
 
 	for (c = 0; c < SEQUENCER_CHANNELS; c++) {
-
 		if (channel[c].newkey) {
 			set_note(c, channel[c].note);
 			set_ins(c, channel[c].ins, channel[c].vol);

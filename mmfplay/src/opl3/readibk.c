@@ -25,6 +25,8 @@ int read_ibk(unsigned char *buf, const int size, char *name)
 	if (!cmp4(buf, 'I', 'B', 'K', 0x1a))
 		return -1;
 
+	buf += 4;
+
 	printf("#include \"opl3.h\"\n\n");
 	printf("struct opl2_instrument %s[128] = {\n", name);
 
