@@ -49,7 +49,7 @@ __RCSID("$NetBSD: getopt_long.c,v 1.15 2002/01/31 22:43:40 tv Exp $");
 #include <assert.h>
 /*#include <err.h>*/		/* Fails on Solaris */
 #include <errno.h>
-#include <getopt.h>
+#include "getopt.h"
 #include <stdlib.h>
 #include <string.h>
 
