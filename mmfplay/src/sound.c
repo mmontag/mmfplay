@@ -12,6 +12,7 @@ struct device *dev;
 struct sound_driver *snd;
 SINT16 *snd_buffer;
 
+extern struct device dev_fm;
 extern struct device dev_opl3;
 extern struct device dev_opl2;
 extern struct device dev_buzzer;
@@ -36,6 +37,7 @@ static void init_sound_device()
 	printf("Initializing sound devices... ");
 	register_device(&dev_head, &dev_opl3);
 	register_device(&dev_head, &dev_opl2);
+	register_device(&dev_head, &dev_fm);
 	register_device(&dev_head, &dev_buzzer);
 
 	list_for_each (h, &dev_head, next) {
@@ -46,10 +48,10 @@ static void init_sound_device()
 
 	list_for_each (h, &dev_head, next) {
 		d = list_entry(h, struct device_list, list);
-printf("comparing %s %s\n", d->dev->name,opt.device);
-		if (!strcmp(d->dev->name,opt.device))
+		if (!strcmp(d->dev->name,opt.device)) {
 			dev = d->dev;
-		break;
+			break;
+		}
 	}
 }
 
