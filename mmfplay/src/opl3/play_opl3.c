@@ -123,11 +123,6 @@ static void stop_note(int c)
 	opl3_write_chan(c, OPL3_REG_CH_KEY_BLOCK, 0);
 }
 
-void __init_device()
-{
-	dev = &dev_opl3;
-}
-
 static int opl3_init()
 {
 	int i;

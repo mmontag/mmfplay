@@ -53,44 +53,37 @@ int read_sbi(unsigned char *buf, const int size)
 
 		printf ("\t/* %3d: %-20.20s */\n", n, sbi->name);
 
-/* #define SET_OPL3(n,o,y,x) opl3_ins[n].op[o].x = sbi->A.y ## _ ## x */
-#define SET_OPL3(n,o,y,x) printf("0x%02x", sbi->A.y ## _ ## x); 
-#define _ printf(", ");
-
 		printf("\t{ { ");
-		SET_OPL3(n, 0, m, flg_mul); _;
-		SET_OPL3(n, 0, m, ksl_tl); _;
-		SET_OPL3(n, 0, m, ar_dr); _;
-		SET_OPL3(n, 0, m, sl_rr); _;
-		SET_OPL3(n, 0, m, ws);
+		printf("0x%02x, ", sbi->A.m_flg_mul);
+		printf("0x%02x, ", sbi->A.m_ksl_tl);
+		printf("0x%02x, ", sbi->A.m_ar_dr);
+		printf("0x%02x, ", sbi->A.m_sl_rr);
+		printf("0x%02x", sbi->A.m_ws);
 		printf(" },\t/* OP1 */\n");
 
 		printf("\t  { ");
-		SET_OPL3(n, 1, c, flg_mul); _;
-		SET_OPL3(n, 1, c, ksl_tl); _;
-		SET_OPL3(n, 1, c, ar_dr); _;
-		SET_OPL3(n, 1, c, sl_rr); _;
-		SET_OPL3(n, 1, c, ws);
+		printf("0x%02x, ", sbi->A.c_flg_mul);
+		printf("0x%02x, ", sbi->A.c_ksl_tl);
+		printf("0x%02x, ", sbi->A.c_ar_dr);
+		printf("0x%02x, ", sbi->A.c_sl_rr);
+		printf("0x%02x", sbi->A.m_ws);
 		printf(" },\t/* OP2 */\n");
 
 		printf("\t  { ");
-		SET_OPL3(n, 2, m, flg_mul); _;
-		SET_OPL3(n, 2, m, ksl_tl); _;
-		SET_OPL3(n, 2, m, ar_dr); _;
-		SET_OPL3(n, 2, m, sl_rr); _;
-		SET_OPL3(n, 2, m, ws);
+		printf("0x%02x, ", sbi->B.m_flg_mul);
+		printf("0x%02x, ", sbi->B.m_ksl_tl);
+		printf("0x%02x, ", sbi->B.m_ar_dr);
+		printf("0x%02x, ", sbi->B.m_sl_rr);
+		printf("0x%02x", sbi->B.m_ws);
 		printf(" },\t/* OP3 */\n");
 
 		printf("\t  { ");
-		SET_OPL3(n, 3, c, flg_mul); _;
-		SET_OPL3(n, 3, c, ksl_tl); _;
-		SET_OPL3(n, 3, c, ar_dr); _;
-		SET_OPL3(n, 3, c, sl_rr); _;
-		SET_OPL3(n, 3, c, ws);
+		printf("0x%02x, ", sbi->B.c_flg_mul);
+		printf("0x%02x, ", sbi->B.c_ksl_tl);
+		printf("0x%02x, ", sbi->B.c_ar_dr);
+		printf("0x%02x, ", sbi->B.c_sl_rr);
+		printf("0x%02x", sbi->B.m_ws);
 		printf(" } },\t/* OP4 */\n");
-
-		/*opl3_ins[n].fb_algA = sbi->A.fb_alg;
-		opl3_ins[n].fb_algB = sbi->B.fb_alg;*/
 
 		printf("\t0x%02x, 0x%02x\n", sbi->A.fb_alg, sbi->B.fb_alg);
 		printf("      },\n");

@@ -1,4 +1,4 @@
-$Id: README.player,v 1.2 2004/06/29 18:18:55 cmatsuoka Exp $
+$Id: README.player,v 1.3 2004/06/30 20:27:58 cmatsuoka Exp $
 
 
 Architecture:
@@ -12,6 +12,11 @@ Architecture:
 	+-----------+-----------+---------+-----------+
 	|  YMF262   |  YMU762   |   ...   | softmixer |
 	+-----------+-----------+         +-----------+
+
+What we call "midi player" is like a midi sequencer with many
+channels per track, and what we call "sequencer" is like a 
+tracker, with only one sound channel per track.
+
 
 Note playing call flow:
 
