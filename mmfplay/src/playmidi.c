@@ -124,21 +124,21 @@ static unsigned char *play_midi_event(unsigned char *buf)
 		n = *buf++;
 	} else if (bh == 0x80) {
 		int note, vel, i;
-		printf("TRK%02x Note On: ", bl);
+		/*printf("TRK%02x Note On: ", bl);*/
 		note = *buf++;
 		buf = read_varlen(buf, &vel, &i);
-		printf("Note %02x Vel %02x\n", note, vel);
+		/*printf("Note %02x Vel %02x\n", note, vel);*/
 		
 		midi_note_on(bl, note, vel, -1);
 
 	} else if (bh == 0x90) {
 		int note, vel, time, i;
-		printf("TRK%02x Note On: ", bl);
+		/*printf("TRK%02x Note On: ", bl);*/
 		note = *buf++;
 		buf = read_varlen(buf, &vel, &i);
 		buf = read_varlen(buf, &time, &i);
-		printf("Note %02x Vel %02x Gate Time %02x\n",
-			note, vel, time);
+		/*printf("Note %02x Vel %02x Gate Time %02x\n",
+			note, vel, time);*/
 
 		midi_note_on(bl, note, vel, time);
 
