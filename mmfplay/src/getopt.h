@@ -49,11 +49,16 @@
 #  define __BEGIN_DECLS
 #  define __END_DECLS
 # endif
-# define __P(args)      args
+#else
+#  define __BEGIN_DECLS
+#  define __END_DECLS
 #endif
 
+#define __P(args)      args
+#define GETOPT_API
+
 #ifndef _WIN32
-#include <sys/cdefs.h>
+/*#include <sys/cdefs.h>*/ /* Fails on Solaris */
 #include <unistd.h>
 #endif
 

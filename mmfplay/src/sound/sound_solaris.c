@@ -1,7 +1,7 @@
 /*  Sarien - A Sierra AGI resource interpreter engine
  *  Copyright (C) 1999,2001 Stuart George and Claudio Matsuoka
  *  
- *  $Id: sound_solaris.c,v 1.1 2004/06/29 13:16:43 cmatsuoka Exp $
+ *  $Id: sound_solaris.c,v 1.2 2004/06/30 13:28:40 cmatsuoka Exp $
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ static int solaris_init_sound (SINT16 *b)
 	AUDIO_INITINFO (&ainfo);
 
 	if ((audio_fd = open ("/dev/audio", O_WRONLY)) < 0)
-		return err_Unk;
+		return -1;
 
 	/* empty buffers before change config */
 	ioctl (audio_fd, AUDIO_DRAIN, 0);	/* drain everything out */
@@ -114,15 +114,15 @@ static int solaris_init_sound (SINT16 *b)
 	ainfo.play.buffer_size = bsize;
 
 	if (ioctl (audio_fd, AUDIO_SETINFO, &ainfo) < 0)
-		return err_Unk;
+		return -1;
 
 	report ("Solaris sound driver written by claudio@helllabs.org, "
 		"fixed by Keith Hargrove.\n");
 
-	pthread_create (&thread, NULL, sound_thread, NULL);
-	pthread_detach (thread);
+	/*pthread_create (&thread, NULL, sound_thread, NULL);
+	pthread_detach (thread);*/
 
-	return err_OK;
+	return 0;
 }
 
 

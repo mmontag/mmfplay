@@ -39,15 +39,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
+/* #include <sys/cdefs.h> */	/* Fails on Solaris */
 #if defined(LIBC_SCCS) && !defined(lint)
 __RCSID("$NetBSD: getopt_long.c,v 1.15 2002/01/31 22:43:40 tv Exp $");
 #endif /* LIBC_SCCS and not lint */
 
-/*#include "namespace.h"*/
+/*#include "namespace.h"*/	/* Fails on Solaris */
 
 #include <assert.h>
-#include <err.h>
+/*#include <err.h>*/		/* Fails on Solaris */
 #include <errno.h>
 #include <getopt.h>
 #include <stdlib.h>
@@ -85,8 +85,25 @@ static void warnx(int print_error, const char *fmt, ...)
 
 #else
 
-/* FIXME */
-#define warnx printf
+#ifndef HAS_WARNX
+
+#include <stdio.h>
+#include <stdarg.h>
+
+/* FIXME: read argv[0] */
+static void warnx(const char *fmt, ...)
+{
+	va_list ap;
+
+	fprintf(stderr, "mmfplay: ");
+	va_start(ap, fmt);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+	fprintf(stderr, "\n");
+}
+
+
+#endif
 
 #endif //_WIN32
 

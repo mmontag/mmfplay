@@ -2,6 +2,7 @@
 #ifndef __SOUND_H
 #define __SOUND_H
 
+#include "mmfplay.h"
 
 #define BUFFER_SIZE 132
 

@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.6 2004/06/30 13:11:31 cmatsuoka Exp $
+# $Id: Make.rules,v 1.7 2004/06/30 13:28:39 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall
@@ -13,7 +13,7 @@ MAKEFILE= Makefile
 include $(CONF)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(XCFLAGS) $(XXCFLAGS) -o$*.o $<
+	$(CC) -c $(CFLAGS) $(XCFLAGS) $(XXCFLAGS) -o $*.o $<
 
 dummy:
 
@@ -24,14 +24,14 @@ clean distclean::
 	rm -f *.o *.obj errlist core depend $(CFILES)
 ifdef DDIRS
 	@for i in $(DDIRS); do \
-		(cd $$i; [ -f $(MAKEFILE) ] && $(MAKE) $@) \
+		(cd $$i; [ -f Makefile ] && $(MAKE) $@) \
 	done; true
 endif
 
 subdirs:
 ifdef DDIRS
 	@for i in $(DDIRS); do \
-		(cd $$i; [ -f $(MAKEFILE) ] && $(MAKE) all) \
+		(cd $$i; [ -f Makefile ] && $(MAKE) all) \
 	done; true
 endif
 
@@ -66,11 +66,11 @@ depend: $(MAKEFILE)
 # Poor man's autoconf
 $(CONF):
 	@rm -f $@
-	@case `uname -o` in				\
+	@case `uname -s` in				\
 	*Linux)						\
 		SOUND=oss;				\
 		echo "XXCFLAGS=-DHAS_GETOPT_LONG">>$@;;	\
-	Solaris)					\
+	SunOS)						\
 		SOUND=solaris;;				\
 	esac;						\
 	echo "SOUND_DRIVER=$$SOUND">>$@;		\
