@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.8 2004/06/30 14:01:10 cmatsuoka Exp $
+# $Id: Make.rules,v 1.9 2004/06/30 14:09:34 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall
@@ -66,12 +66,18 @@ depend: $(MAKEFILE)
 # Poor man's autoconf
 $(CONF):
 	@rm -f $@
-	case `uname -s` in				\
+	@case `uname -s` in				\
 	*Linux)						\
 		SOUND=oss;				\
 		FLAGS="-DHAS_GETOPT_LONG";;		\
 	SunOS)						\
 		SOUND=solaris;;				\
+	FreeBSD)					\
+		SOUND=freebsd;				\
+		FLAGS="-DHAS_GETOPT_LONG";;		\
+	NetBSD|OpenBSD)					\
+		SOUND=bsd;				\
+		FLAGS="-DHAS_GETOPT_LONG";;		\
 	*)						\
 		SOUND=`uname -s|tr A-Z a-z`;;		\
 	esac;						\

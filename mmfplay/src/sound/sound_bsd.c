@@ -1,7 +1,7 @@
 /*  Sarien - A Sierra AGI resource interpreter engine
  *  Copyright (C) 1999,2001 Stuart George and Claudio Matsuoka
  *  
- *  $Id: sound_bsd.c,v 1.1 2004/06/29 13:16:43 cmatsuoka Exp $
+ *  $Id: sound_bsd.c,v 1.2 2004/06/30 14:09:34 cmatsuoka Exp $
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <sys/ioctl.h>
 #include <sys/audioio.h>
 
-#include "typedef.h"
+/*#include "typedef.h"*/
 #include "sound.h"
 
 static int bsd_init_sound (SINT16 *);
@@ -33,11 +33,12 @@ static struct sound_driver sound_bsd = {
 	"BSD /dev/audio sound output",
 	bsd_init_sound,
 	bsd_close_sound,
+	dump_buffer
 };
 
 static int audio_fd;
 
-
+#if 0
 #include <pthread.h>
 
 static pthread_t thread;
@@ -51,6 +52,7 @@ static void *sound_thread (void *arg)
 		dump_buffer ();
 	}
 }
+#endif
 
 
 void __init_sound ()
@@ -66,7 +68,7 @@ static int bsd_init_sound (SINT16 *b)
 	buffer = b;
 
 	if ((audio_fd = open ("/dev/audio", O_WRONLY)) < 0)
-		return err_Unk;
+		return -1;
 
 	AUDIO_INITINFO (&ainfo);
 	ainfo.play.sample_rate = 22050;
@@ -76,16 +78,16 @@ static int bsd_init_sound (SINT16 *b)
 	ainfo.play.buffer_size = 16384;
 
 	if (ioctl (audio_fd, AUDIO_SETINFO, &ainfo) == -1)
-		return err_Unk;
+		return -1;
 
 	report ("BSD sound driver written by claudio@helllabs.org.\n");
 
 	/* Set sound device to 16 bit, 22 kHz mono */
 
-	pthread_create (&thread, NULL, sound_thread, NULL);
-	pthread_detach (thread);
+	/*pthread_create (&thread, NULL, sound_thread, NULL);
+	pthread_detach (thread);*/
 
-	return err_OK;
+	return 0;
 }
 
 
