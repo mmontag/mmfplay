@@ -1,6 +1,11 @@
-$Id: README,v 1.5 2004/07/05 02:25:56 cmatsuoka Exp $
+$Id: README,v 1.6 2004/07/06 01:22:37 cmatsuoka Exp $
 
 MMFplay - A player for SMAF files
+
+The player currently uses an YMF262 emulator as a proof of concept. The
+idea is to write a 2/4OP FM tone generator with 32/16 channels similar
+to the YMU262. Meanwhile, features can be implemented and tested with
+the YMF262.
 
 
 Current status:
@@ -16,8 +21,7 @@ Current status:
 
 TODO:
 
-- check possibility of converting ymu762 tones to ymf262
-- build a ymu762 emulator
+- rework the ymf262 emulator to something closer to the ymu262
 - support smaf files converted from smf
 - support multi-track midi
 - implement midi controllers
