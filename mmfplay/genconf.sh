@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Poor man's autoconf
-# $Id: genconf.sh,v 1.5 2004/07/01 11:31:18 cmatsuoka Exp $
+# $Id: genconf.sh,v 1.6 2004/07/01 11:35:47 cmatsuoka Exp $
 
 OS=`uname -s`
 TMPOUT=tmpout.$$
@@ -44,7 +44,7 @@ test -n "$CC" && echo "CC = $CC"
 test -n "$LD" && echo "LD = $LD"
 
 cat <<EOF
-# generated with `basename $0` \$Ver$
+# generated with `basename $0` \$Revision: 1.6 $
 # on `uname -srm` (`uname -n`)
 # `date`
 SOUND_DRIVER = $SOUND
