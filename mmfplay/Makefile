@@ -1,10 +1,11 @@
-# $Id: Makefile,v 1.1 2004/06/29 13:16:36 cmatsuoka Exp $
+# $Id: Makefile,v 1.2 2004/06/30 03:21:01 cmatsuoka Exp $
 
 TOPDIR	= .
 
 PKGNAME	= mmfplay
 DIST	= $(PKGNAME)-$(VERSION)
 DFILES	= Makefile Make.rules Version README
+CFILES	=
 DDIRS	= doc src
 
 
@@ -25,3 +26,6 @@ dist:
 	ls -l $(DIST).tar.gz
 
 include Make.rules
+
+clean::
+	rm Make.conf
