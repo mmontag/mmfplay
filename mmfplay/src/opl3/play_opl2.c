@@ -72,7 +72,7 @@ static void set_ins(int c, int n, int v)
 	int i;
 	struct opl2_instrument *ins;
 
-	printf("channel %d set instrument %d\n", c, n);
+	/*printf("channel %d set instrument %d\n", c, n);*/
 
 	ins = &opl2_ins[n];
 
