@@ -29,10 +29,6 @@ struct device dev_opl3 = {
 #define OPL3_CHIP(c) ((c)/OPL3_VOICES)
 #define OPL3_CHAN(c) ((c)%OPL3_VOICES)
 
-struct opl3_info opl3_info[NUM_CHIPS];
-
-#define OPL3_INS(c) opl3_info[(c)/OPL3_VOICES].ins[(c)%OPL3_VOICES]
-
 
 /* YMF262 registers */
 
@@ -157,15 +153,13 @@ static void opl3_update()
 
 	for (c = 0; c < SEQUENCER_CHANNELS; c++) {
 
-		if (channel[c].ins != OPL3_INS(c)) {
-			if (channel[c].newkey) {
-				set_note(c, channel[c].note);
-				set_ins(c, channel[c].ins, channel[c].vol);
-				channel[c].newkey = 0;
-			}
-			if (channel[c].timer == 0) {
-				stop_note(c);
-			}
+		if (channel[c].newkey) {
+			set_note(c, channel[c].note);
+			set_ins(c, channel[c].ins, channel[c].vol);
+			channel[c].newkey = 0;
+		}
+		if (channel[c].timer == 0) {
+			stop_note(c);
 		}
 
 		/* update opl */

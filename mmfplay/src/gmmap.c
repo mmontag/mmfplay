@@ -11,7 +11,7 @@ char *gm_ins[128] = {
 /* 8 */		"Clavi",
 
 /* Chromatic Percussion */
-/*   9 */	"Celesta",
+/*  9 */	"Celesta",
 /* 10 */	"Glockenspiel",
 /* 11 */	"Music Box",
 /* 12 */	"Vibraphone",

@@ -5,10 +5,6 @@
 
 #define OPL3_VOICES 6
 
-struct opl3_info {
-	int ins[OPL3_VOICES];
-};
-
 struct opl3_operator {
 	unsigned char flg_mul;
 	unsigned char ksl_tl;

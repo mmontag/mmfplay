@@ -4,7 +4,7 @@
 
 #include "mmfplay.h"
 
-#define BUFFER_SIZE 160
+#define BUFFER_SIZE 152
 
 
 #define report(x...) printf(" snd: " x)
