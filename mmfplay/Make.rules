@@ -1,9 +1,9 @@
-# $Id: Make.rules,v 1.13 2004/07/01 02:29:37 cmatsuoka Exp $
+# $Id: Make.rules,v 1.14 2004/07/01 10:58:32 cmatsuoka Exp $
 
 CC	= gcc
-CFLAGS	= -g -O0 -Wall -DINLINE=inline $(XCFLAGS) $(XXCFLAGS)
+CFLAGS	= -g -O0 -Wall -DINLINE=inline $(XCFLAGS) $(AUTO_CFLAGS)
 LD	= gcc
-LDFLAGS	= -g $(XXLDFLAGS)
+LDFLAGS	= -g $(AUTO_LDFLAGS)
 RANLIB	= ranlib
 SHELL	= /bin/sh
 CONF	= $(TOPDIR)/Make.conf
@@ -36,7 +36,7 @@ ifdef DDIRS
 endif
 
 $(BIN): $(OBJS)
-	$(LD) $(LDFLAGS) -o$@ $+ $(LIBS) $(XXLIBS)
+	$(LD) $(LDFLAGS) -o$@ $+ $(LIBS) $(AUTO_LIBS)
 
 $(OBJS): $(MAKEFILE) $(CONF)
 

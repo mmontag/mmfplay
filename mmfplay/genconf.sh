@@ -1,6 +1,7 @@
 #!/bin/sh
 #
-# $Id: genconf.sh,v 1.2 2004/07/01 02:19:12 cmatsuoka Exp $
+# Poor man's autoconf
+# $Id: genconf.sh,v 1.3 2004/07/01 10:58:32 cmatsuoka Exp $
 
 OS=`uname -s`
 
@@ -32,14 +33,10 @@ Darwin)
 	SOUND=`uname -s|tr A-Z a-z`;;
 esac
 
-if [ -n "$CC" ]; then
-	echo "CC = $CC"
-fi
-if [ -n "$LD" ]; then
-	echo "LD = $LD"
-fi
+test -n "$CC" && echo "CC = $CC"
+test -n "$LD" && echo "LD = $LD"
 echo "SOUND_DRIVER = $SOUND"
-echo "XXCFLAGS = $CFLAGS"
-echo "XXLDFLAGS = $LDFLAGS"
-echo "XXLIBS = $LIBS"
+echo "AUTO_CFLAGS = $CFLAGS"
+echo "AUTO_LDFLAGS = $LDFLAGS"
+echo "AUTO_LIBS = $LIBS"
 echo "USERNAME = `whoami`@`hostname`"
