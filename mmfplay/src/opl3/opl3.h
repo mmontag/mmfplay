@@ -4,8 +4,9 @@
 
 
 #define OPL3_VOICES 6
+#define OPL2_VOICES 17
 
-struct opl3_operator {
+struct opl2_operator {
 	unsigned char flg_mul;
 	unsigned char ksl_tl;
 	unsigned char ar_dr;
@@ -15,10 +16,17 @@ struct opl3_operator {
 
 struct opl3_instrument {
 	int type;
-	struct opl3_operator op[4];
+	struct opl2_operator op[4];
 	unsigned char fb_algA;
 	unsigned char fb_algB;
 };
+
+struct opl2_instrument {
+	int type;
+	struct opl2_operator op[2];
+	unsigned char fb_alg;
+};
+
 
 #define OPL3_TYPE_2OP		0
 #define OPL3_TYPE_4OP		1
@@ -36,6 +44,7 @@ struct opl3_instrument {
 #define OPL3_BASE		0x220
 
 extern struct opl3_instrument opl3_ins[128];
+extern struct opl2_instrument opl2_ins[128];
 
 #endif
 

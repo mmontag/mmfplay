@@ -2,7 +2,7 @@
 #ifndef __SEQUENCER_H
 #define __SEQUENCER_H
 
-#define SEQUENCER_CHANNELS 12
+#define SEQUENCER_CHANNELS 16
 #define SEQUENCER_INSTRUMENTS 128
 
 struct seq_channel {
