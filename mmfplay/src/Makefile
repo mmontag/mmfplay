@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.15 2004/07/06 08:43:26 cmatsuoka Exp $
+# $Id: Makefile,v 1.16 2004/07/06 09:01:29 cmatsuoka Exp $
 
 TOPDIR	= ..
 
@@ -17,7 +17,7 @@ BIN	= mmfplay
 
 all: subdirs $(BIN)
 
-$(BIN): sound/libsound.a opl3/libopl3.a fm/libfm.a
+$(BIN): fm/libfm.a
 
 include $(TOPDIR)/Make.rules
 

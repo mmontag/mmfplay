@@ -145,11 +145,9 @@ typedef struct {
 	UINT32	noise_p;		/* current noise 'phase'	*/
 	UINT32	noise_f;		/* current noise period		*/
 
-	UINT8	OPL3_mode;		/* OPL3 extension enable flag	*/
+	//UINT8	OPL3_mode;		/* OPL3 extension enable flag	*/
 
 	UINT32	address;		/* address register		*/
-	UINT8	status;			/* status flag			*/
-	UINT8	statusmask;		/* status mask			*/
 
 	int clock;			/* master clock  (Hz)		*/
 	int rate;			/* sampling rate (Hz)		*/
@@ -467,9 +465,6 @@ static const INT8 lfo_pm_table[8*8*2] = {
 7, 3, 0,-3,-7,-3, 0, 3	/*LFO PM depth = 1*/
 };
 
-
-/* lock level of common table */
-static int num_lock = 0;
 
 /* work table */
 static void *cur_chip = NULL;			/* current chip point */
@@ -899,10 +894,6 @@ static int init_tables(void)
 	return 1;
 }
 
-static void OPLCloseTable( void )
-{
-}
-
 
 
 static void OPL3_initalize(OPL3 *chip)
@@ -1009,7 +1000,6 @@ INLINE void set_mul(OPL3 *chip,int slot,int v)
 	SLOT->vib     = (v&0x40);
 	SLOT->AMmask  = (v&0x80) ? ~0 : 0;
 
-	if (chip->OPL3_mode & 1)
 	{
 		int chan_no = slot/2;
 
@@ -1056,11 +1046,6 @@ INLINE void set_mul(OPL3 *chip,int slot,int v)
 		break;
 		}
 	}
-	else
-	{
-		/* in OPL2 mode */
-		CALC_FCSLOT(CH,SLOT);
-	}
 }
 
 /* set ksl & tl */
@@ -1074,7 +1059,6 @@ INLINE void set_ksl_tl(OPL3 *chip,int slot,int v)
 	SLOT->ksl = ksl ? 3-ksl : 31;
 	SLOT->TL  = (v&0x3f)<<(ENV_BITS-1-7); /* 7 bits TL (bit 6 = always 0) */
 
-	if (chip->OPL3_mode & 1)
 	{
 		int chan_no = slot/2;
 
@@ -1121,12 +1105,6 @@ INLINE void set_ksl_tl(OPL3 *chip,int slot,int v)
 		break;
 		}
 	}
-	else
-	{
-		/* in OPL2 mode */
-		SLOT->TLL = SLOT->TL + (CH->ksl_base>>SLOT->ksl);
-	}
-
 }
 
 /* set attack rate & decay rate  */
@@ -1171,19 +1149,6 @@ INLINE void set_sl_rr(OPL3 *chip,int slot,int v)
 }
 
 
-static void update_channels(OPL3 *chip, OPL3_CH *CH)
-{
-	/* update channel passed as a parameter and a channel at CH+=3; */
-	if (CH->extended)
-	{	/* we've just switched to combined 4 operator mode */
-
-	}
-	else
-	{	/* we've just switched to normal 2 operator mode */
-
-	}
-
-}
 
 /* write a value v to register r on OPL chip */
 static void OPL3WriteReg(OPL3 *chip, int r, int v)
@@ -1206,42 +1171,34 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			{
 				UINT8 prev;
 
-				CH = &chip->P_CH[0];	/* channel 0 */
+				CH = &chip->P_CH[0];		/* channel 0 */
 				prev = CH->extended;
 				CH->extended = (v>>0) & 1;
-				if(prev != CH->extended)
-					update_channels(chip, CH);
-				CH++;					/* channel 1 */
+
+				CH++;				/* channel 1 */
 				prev = CH->extended;
 				CH->extended = (v>>1) & 1;
-				if(prev != CH->extended)
-					update_channels(chip, CH);
-				CH++;					/* channel 2 */
+
+				CH++;				/* channel 2 */
 				prev = CH->extended;
 				CH->extended = (v>>2) & 1;
-				if(prev != CH->extended)
-					update_channels(chip, CH);
 
-
-				CH = &chip->P_CH[9];	/* channel 9 */
+				CH = &chip->P_CH[9];		/* channel 9 */
 				prev = CH->extended;
 				CH->extended = (v>>3) & 1;
-				if(prev != CH->extended)
-					update_channels(chip, CH);
-				CH++;					/* channel 10 */
+
+				CH++;				/* channel 10 */
 				prev = CH->extended;
 				CH->extended = (v>>4) & 1;
-				if(prev != CH->extended)
-					update_channels(chip, CH);
-				CH++;					/* channel 11 */
+
+				CH++;				/* channel 11 */
 				prev = CH->extended;
 				CH->extended = (v>>5) & 1;
-				if(prev != CH->extended)
-					update_channels(chip, CH);
 
 			}
 			return;
 		break;
+#if 0
 		case 0x105:	/* OPL3 extensions enable register */
 
 			chip->OPL3_mode = v&0x01;	/* OPL3 mode when bit0=1 otherwise it is OPL2 mode */
@@ -1256,6 +1213,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 
 			return;
 		break;
+#endif
 
 		default:
 		break;
@@ -1317,7 +1275,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 		{	/* b0-b8 */
 			block_fnum = ((v&0x1f)<<8) | (CH->block_fnum&0xff);
 
-			if (chip->OPL3_mode & 1)
 			{
 				int chan_no = (r&0x0f) + ch_offset;
 
@@ -1404,19 +1361,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				break;
 				}
 			}
-			else
-			{
-				if(v&0x20)
-				{
-					FM_KEYON (&CH->SLOT[SLOT1], 1);
-					FM_KEYON (&CH->SLOT[SLOT2], 1);
-				}
-				else
-				{
-					FM_KEYOFF(&CH->SLOT[SLOT1],~1);
-					FM_KEYOFF(&CH->SLOT[SLOT2],~1);
-				}
-			}
 		}
 		/* update */
 		if(CH->block_fnum != block_fnum)
@@ -1436,7 +1380,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			/* if notesel == 1 -> lsb of kcode is bit 9 (MSB-1) of fnum */
 			CH->kcode |= (CH->block_fnum&0x200)>>9;	/* notesel == 0 */
 
-			if (chip->OPL3_mode & 1)
 			{
 				int chan_no = (r&0x0f) + ch_offset;
 				/* in OPL3 mode */
@@ -1511,18 +1454,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				break;
 				}
 			}
-			else
-			{
-				/* in OPL2 mode */
-
-				/* refresh Total Level in both SLOTs of this channel */
-				CH->SLOT[SLOT1].TLL = CH->SLOT[SLOT1].TL + (CH->ksl_base>>CH->SLOT[SLOT1].ksl);
-				CH->SLOT[SLOT2].TLL = CH->SLOT[SLOT2].TL + (CH->ksl_base>>CH->SLOT[SLOT2].ksl);
-
-				/* refresh frequency counter in both SLOTs of this channel */
-				CALC_FCSLOT(CH,&CH->SLOT[SLOT1]);
-				CALC_FCSLOT(CH,&CH->SLOT[SLOT2]);
-			}
 		}
 	break;
 
@@ -1536,7 +1467,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 		CH->SLOT[SLOT1].FB  = (v>>1)&7 ? ((v>>1)&7) + 7 : 0;
 		CH->SLOT[SLOT1].CON = v&1;
 
-		if( chip->OPL3_mode & 1 )
 		{
 			int chan_no = (r&0x0f) + ch_offset;
 
@@ -1653,12 +1583,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			break;
 			}
 		}
-		else
-		{
-			/* OPL2 mode - always 2 operators mode */
-			CH->SLOT[SLOT1].connect = CH->SLOT[SLOT1].CON ? &chanout[(r&0xf)+ch_offset] : &phase_modulation;
-			CH->SLOT[SLOT2].connect = &chanout[(r&0xf)+ch_offset];
-		}
 	break;
 
 	case 0xe0: /* waveform select */
@@ -1669,66 +1593,15 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 
 		CH = &chip->P_CH[slot/2];
 
-
 		/* store 3-bit value written regardless of current OPL2 or OPL3 mode... (verified on real YMF262) */
 		v &= 7;
 		CH->SLOT[slot&1].waveform_number = v;
 
-		/* ... but select only waveforms 0-3 in OPL2 mode */
-		if( !(chip->OPL3_mode & 1) )
-		{
-			v &= 3; /* we're in OPL2 mode */
-		}
 		CH->SLOT[slot&1].wavetable = v * SIN_LEN;
 	break;
 	}
 }
 
-#ifdef LOG_CYM_FILE
-static void cymfile_callback (int n)
-{
-	if (cymfile)
-	{
-		fputc( (unsigned char)0, cymfile );
-	}
-}
-#endif
-
-/* lock/unlock for common table */
-static int OPL3_LockTable(void)
-{
-	num_lock++;
-	if(num_lock>1) return 0;
-
-	/* first time */
-
-	cur_chip = NULL;
-
-	if( !init_tables() )
-	{
-		num_lock--;
-		return -1;
-	}
-
-	return 0;
-}
-
-static void OPL3_UnLockTable(void)
-{
-	if(num_lock) num_lock--;
-	if(num_lock) return;
-
-	/* last time */
-
-	cur_chip = NULL;
-	OPLCloseTable();
-
-#ifdef LOG_CYM_FILE
-	fclose (cymfile);
-	cymfile = NULL;
-#endif
-
-}
 
 static void OPL3ResetChip(OPL3 *chip)
 {
@@ -1777,7 +1650,7 @@ static OPL3 *OPL3Create(int clock, int rate)
 {
 	OPL3 *chip;
 
-	if (OPL3_LockTable() ==-1) return NULL;
+	init_tables();
 
 	/* allocate memory block */
 	chip = (OPL3 *)malloc(sizeof(OPL3));
@@ -1803,7 +1676,6 @@ static OPL3 *OPL3Create(int clock, int rate)
 /* Destroy one of virtual YMF262 */
 static void OPL3Destroy(OPL3 *chip)
 {
-	OPL3_UnLockTable();
 	free(chip);
 }
 
@@ -1837,36 +1709,15 @@ static int OPL3Write(OPL3 *chip, int a, int v)
 		   verified on registers from set#2: 0x01, 0x04, 0x20-0xef
 		   The only exception is register 0x05.
 		*/
-		if( chip->OPL3_mode & 1 )
 		{
 			/* OPL3 mode */
 				chip->address = v | 0x100;
 		}
-		else
-		{
-			/* in OPL2 mode the only accessible in set #2 is register 0x05 */
-			if( v==5 )
-				chip->address = v | 0x100;
-			else
-				chip->address = v;	/* verified range: 0x01, 0x04, 0x20-0xef(set #2 becomes set #1 in opl2 mode) */
-		}
 	break;
 	}
 
-	return chip->status>>7;
+	return 0;
 }
-
-static unsigned char OPL3Read(OPL3 *chip,int a)
-{
-	if( a==0 )
-	{
-		/* status port */
-		return chip->status;
-	}
-
-	return 0x00;	/* verified on real YMF262 */
-}
-
 
 
 
@@ -1920,20 +1771,6 @@ void YMF262ResetChip(int which)
 int YMF262Write(int which, int a, int v)
 {
 	return OPL3Write(YMF262[which], a, v);
-}
-
-unsigned char YMF262Read(int which, int a)
-{
-	/* Note on status register: */
-
-	/* YM3526(OPL) and YM3812(OPL2) return bit2 and bit1 in HIGH state */
-
-	/* YMF262(OPL3) always returns bit2 and bit1 in LOW state */
-	/* which can be used to identify the chip */
-
-	/* YMF278(OPL4) returns bit2 in LOW and bit1 in HIGH state ??? info from manual - not verified */
-
-	return OPL3Read(YMF262[which], a);
 }
 
 
