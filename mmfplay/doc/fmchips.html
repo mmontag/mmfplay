@@ -1,0 +1,289 @@
+<html>
+<body>
+<h1>
+
+<h2>Successive FM sound source chip</h2>
+
+<i>Excerpt from <a href="http://saw.minidns.net/sound/">http://saw.minidns.net/sound/</a>, translated with babelfish.</i>
+
+<p>
+
+It tried arranging the FM sound source classified by type.
+As for MA-2/3 of the portable telephone it is found that it is 
+the chip which is decended of OPL.
+Nevertheless, that as for those where you think whether why the 
+FM sound source is not adopted for the portable game machine am not 
+just I, probably will be.
+PCM 2 sounds it just added also GBA, to former GB, and.<br>
+
+<p>
+
+<table border="1" cellpadding="4">
+<tbody><tr><th width="60">OPL system</th>
+<td>OPL (YM3526) / OPLL (YM2413) / OPL2 (YM3812) / OPL3 (YMF262) 
+there was, was used in MSX and the sound blaster. Also the
+FM sound source of the Sega master system seems like OPL. 
+Basically they are 2 operators, but there are also 4 operator 
+modes in OPL3. With the rhythm sound source, the basic ripple 
+mark can be selected from several types.</td></tr>
+<tr><th>OPM</th>
+<td>Tip/chip name with YM2151, was used with the X68k 
+series and the arcade game. 4 operators, with channel 8, it has 
+been similar to OPN well.</td></tr>
+<tr><th>OPN system</th>
+<td>OPN (YM2203) /OPNA (YM2608/YMF288) /OPN2 
+(YM2612/YM3438/YMF276) /OPNB (YM2610) there was (B) was used with 
+PC-88, PC-98, FM-TOWNS and Mega drive. 4 operator channel 3 
+(channel 6) + SSG channel 3 (OPN2 you release OPNA and OPN2) with, the
+rhythm sound source and the ADPCM sound source are loaded in OPNA. 
+The waveform is sign wave fixing. Being something which
+speech synthesis mode and ADPCM percentage is loved from YM2608, it 
+does YMF288 which is stacked in PC-9801-118. OPNB in the sound 
+source of neo GeoCities, is FM 4 sound + SSG 3 sound + ADPCM7 sound.</td></tr>
+<tr><th>OPP</th>
+<td>Tip/chip name with YM2164, was loaded onto YAMAHA and 
+the KORG make synthesizer. The superior interchangeability of 
+OPM it seems, is, but as for the difference it is not well understood.</td></tr>
+<tr><th>OPS</th>
+<td>With LSI which in name machine DX7 and the like of the 
+past years was stacked, they are 6 operator 32 algorithms.</td></tr>
+<tr><th>OPZ</th>
+<td>It was loaded onto the synthesizer of V50 and the like.
+They are 4 operator 8 sounds, but this 2 being loaded by the 
+actual synthesizer, they are 16 sound poly- phonic. The basic 
+waveform can be selected from several types.</td></tr>
+<tr><th>In addition</th>
+<td>There is a synthesizer which is called to the strongest
+last FM sound source, FS1R, they are as many as 8 operator 88 
+algorithms. There is a software synthesizer which imitates DX7, 
+FM7, but it seems that is 8 operator modes even in this. When it
+comes to here, aiming, the unreasonable air does that it makes sound 
+first.</td></tr>
+</tbody></table>
+
+
+<h2>FM sound source chip comparison</h2>
+
+The recent portable telephone has MIDI sound 
+source common efficiency.
+It tried making the comparison table of the FM sound source of 
+the personal computer then.
+As expected because there is opening 15 years in release time, 
+the portable telephone is high function.
+Is, it is to do, setting precision of each parameter OPNA is on.
+
+<p>
+
+<table border="1" cellpadding="4">
+<tbody><tr class="head">
+  <td colspan="3">Tip/chip name</td><td>OPNA (YM2608)</td>
+  <td>OPM (YM2151)</td>
+  <td>MA-2 (YMU759)</td>
+  <td>MA-3 (YMU762)</td>
+</tr>
+<tr class="fm">
+  <td rowspan="22">F<br>M<br>Sound<br>Source</td>
+  <td colspan="2">Synthetic frequency</td>
+  <td>55kHz</td>
+  <td>?</td>
+  <td>?</td>
+  <td>48kHz</td>
+</tr>
+<tr class="fm">
+  <td colspan="2">The number of operators</td>
+  <td colspan="3">4<br>As for feedback slot 1</td>
+  <td>4<br>As for feedback slot 1 and 3</td>
+</tr>
+<tr class="fm">
+  <td colspan="2">The number of channels</td>
+  <td>6<br>As for Ch.3/6 there is an effective sound mode,</td>
+  <td>8</td>
+  <td>8<br>Or 2 operator ×16 sounds</td>
+  <td>16<br>Or 2 operator ×32 sounds</td>
+</tr>
+<tr class="fm">
+  <td colspan="2">The number of algorithms</td>
+  <td colspan="2">8</td>
+  <td>4</td>
+  <td>6</td>
+</tr>
+<tr class="fm">
+  <td colspan="2">Waveform</td>
+  <td colspan="2">Only sine wave</td>
+  <td>8 waveforms</td>
+  <td>29 corrugated + user 3 waveforms</td>
+</tr>
+<tr class="fm">
+  <td colspan="2">Pan</td>
+  <td colspan="2">The left - both - 3 stages the right</td>
+  <td colspan="2">The left? 32 stages the right</td>
+</tr>
+<tr class="fm">
+  <td rowspan="11">Pas<br>ラ<br>メ<br>|<br>タ</td>
+  <td>TL (total level)</td>
+  <td colspan="2">0? 127</td>
+  <td colspan="2">0? 63</td>
+</tr>
+<tr class="fm">
+    <td>AR (attack rate)</td>
+  <td colspan="2">0? 31</td>
+  <td colspan="2">0? 15</td>
+</tr>
+<tr class="fm">
+  <td>DR (デ…ケイレート)</td>
+  <td colspan="2">0? 31</td>
+  <td colspan="2">0? 15</td>
+</tr>
+<tr class="fm">
+  <td>SL (sustain level)</td>
+  <td colspan="4">0? 15</td>
+</tr>
+<tr class="fm">
+  <td>SR (sustain rate)</td>
+  <td colspan="2">0? 31</td>
+  <td>?</td>
+  <td>0? 15</td>
+</tr>
+<tr class="fm">
+  <td>RR (release rate)</td>
+  <td colspan="4">0? 15</td>
+</tr>
+<tr class="fm">
+  <td>FB (self feedback)</td>
+  <td colspan="4">0? 7</td>
+</tr>
+<tr class="fm">
+  <td>MUL (multiple)</td>
+  <td colspan="4">0? 15</td>
+</tr>
+<tr class="fm">
+  <td>KSR (rate key scale)</td>
+  <td colspan="2">0? 3</td>
+  <td colspan="2">0? 1</td>
+</tr>
+<tr class="fm">
+  <td>KSL (level key scale)</td>
+  <td colspan="2">-</td>
+  <td colspan="2">0? 3</td>
+</tr>
+<tr class="fm">
+  <td>DT (デチ…ーン)</td>
+  <td>0? 15</td>
+  <td>0? 15/0? 3 (two)</td>
+  <td>?</td>
+  <td>0? 7</td>
+</tr>
+<tr class="fm">
+  <td rowspan="5">L<br>F<br>O</td>
+  <td>The quantity of LFO</td>
+  <td>1</td>
+  <td>1 (as for waveform from 4 kinds selection)</td>
+  <td>16</td>
+  <td>32</td>
+</tr>
+<tr class="fm">
+  <td>Frequency</td>
+  <td colspan="2">0? 7 (3.98? 72.2Hz) </td>
+  <td colspan="2">0? 3 (1.9? 7.2Hz) </td>
+</tr>
+<tr class="fm">
+  <td>PMS (phase modulation)</td>
+  <td colspan="2">0? 7 (0? ±80 cent)</td>
+  <td colspan="2">0? 3 (3.4? 26.8 cents)</td>
+</tr>
+<tr class="fm">
+  <td>AMS (amplitude modulation)</td>
+  <td colspan="2">0? 3 (0? 11.8dB) </td>
+  <td colspan="2">0? 3 (1.3? 11.8dB) </td>
+</tr>
+<tr class="fm">
+  <td>Remark</td>
+  <td colspan="2">-</td>
+  <td colspan="2">Becoming independent in every channel, designated 
+possibility</td>
+</tr>
+<tr class="ssg">
+  <td rowspan="4">S<br>S<br>G<br>Sound<br>Source</td>
+  <td colspan="2">The number of channels</td>
+  <td>3</td>
+  <td rowspan="2">-</td>
+  <td rowspan="3" colspan="2">?</td>
+</tr>
+<tr class="ssg">
+  <td colspan="2">Envelope generator</td>
+  <td>9 waveforms</td>
+</tr>
+<tr class="ssg">
+  <td colspan="2">Noise sound source</td>
+  <td>To be in common with SSG, 4.23? 131Hz</td>
+  <td>Common with 1 sound and FM8</td>
+</tr>
+<tr class="ssg">
+  <td colspan="2">Remark</td>
+  <td>As for duty ratio 50% fixing</td>
+  <td>?</td>
+  <td colspan="2">By the fact that in the FM sound source the rectangular wave is 
+selected in the waveform substitute possibility.<br>As for accurate reappearance of noise sound source failure</td>
+</tr>
+<tr class="rtm">
+  <td colspan="3">Rhythm sound source</td>
+  <td>Bus drum<br>スネアドラム<br>Cymbal<br>High hat<br>タム<br>Rim shot</td>
+  <td colspan="2">?</td>
+  <td>In WaveTable sound source substitute possibility</td>
+</tr>
+<tr class="pcm">
+  <td rowspan="3">P<br>C<br>M</td>
+  <td colspan="2">The number of channels</td>
+  <td>ADPCM1 sound</td>
+  <td>?</td>
+  <td>ADPCM1 sound</td>
+  <td>WaveTable8 sound + ADPCM/PCM2 sound</td>
+</tr>
+<tr class="pcm">
+  <td colspan="2">RAM capacity</td>
+  <td>256KByte</td>
+  <td>?</td>
+  <td>?</td>
+  <td>8KByte</td>
+</tr>
+<tr class="pcm">
+  <td colspan="2">Remark</td>
+  <td>With 86 boards DRAM<br>Because it is spared, use failure</td>
+  <td>In X68k Oki Electric Industry Co., Ltd. make<br>ADPCM sound source LSI1 loading</td>
+  <td>Musical interval modification failure</td>
+  <td>The WaveTable sound source considerably high function.<br>As for PCM2 sound for stream playback</td>
+</tr>
+</tbody></table>
+
+<h2>Even law frequency chart</h2>
+
+When ear コピ doing the tune whose tempo is 
+fast, the chart which is used the occasion where the last expedient 
+that is devised you grasp musical scale from the waveform.<br>
+The っ て, such a thing doing, the る person it is not or, 
+(laughing<br>
+
+<table border="1" cellpadding="4">
+<caption align="right">(Unit: Hz)</caption>
+<tbody><tr class="head"><th></th><th>C</th><th>C#</th><th>D</th><th>D#</th><th>E</th><th>F</th>
+              <th>F#</th><th>G</th><th>G#</th><th>A</th><th>A#</th><th>B</th></tr>
+<tr><th class="head">O-1</th><td>16.35 </td><td>17.32 </td><td>18.35 </td><td>19.45 </td><td>20.60 </td><td>21.83 </td>
+               <td>23.12 </td><td>24.50 </td><td>25.96 </td><td>27.50 </td><td>29.14 </td><td>30.87 </td></tr>
+<tr><th class="head">O0</th><td>32.70 </td><td>34.65 </td><td>36.71 </td><td>38.89 </td><td>41.20 </td><td>43.65 </td>
+               <td>46.25 </td><td>49.00 </td><td>51.91 </td><td>55.00 </td><td>58.27 </td><td>61.74 </td></tr>
+<tr><th class="head">O1</th><td>65.41 </td><td>69.30 </td><td>73.42 </td><td>77.78 </td><td>82.41 </td><td>87.31 </td>
+               <td>92.50 </td><td>98.00 </td><td>103.8 </td><td>110.0 </td><td>116.5 </td><td>123.5 </td></tr>
+<tr><th class="head">O2</th><td>130.8 </td><td>138.6 </td><td>146.8 </td><td>155.6 </td><td>164.8 </td><td>174.6 </td>
+               <td>185.0 </td><td>196.0 </td><td>207,7</td><td>220.0 </td><td>233.1 </td><td>246.1 </td></tr>
+<tr><th class="head">O3</th><td>261.6 </td><td>277,2</td><td>293.7 </td><td>311.1 </td><td>329.6 </td><td>349.2 </td>
+               <td>370.0 </td><td>392.0 </td><td>415.3 </td><th class="head">440.0 </th><td>466.2 </td><td>493.9 </td></tr>
+<tr><th class="head">O4</th><td>523.3 </td><td>554.4 </td><td>587.3 </td><td>622.3 </td><td>659.3 </td><td>698.5 </td>
+               <td>740.0 </td><td>784.0 </td><td>830.6 </td><td>880.0 </td><td>932.3 </td><td>987.7 </td></tr>
+<tr><th class="head">O5</th><td>1047</td><td>1109</td><td>1175</td><td>1245</td><td>1319</td><td>1397</td>
+               <td>1480</td><td>1568</td><td>1661</td><td>1760</td><td>1865</td><td>1976</td></tr>
+<tr><th class="head">O6</th><td>2093</td><td>2217</td><td>2349</td><td>2489</td><td>2637</td><td>2794</td>
+               <td>2960</td><td>3136</td><td>3322</td><td>3520</td><td>3729</td><td>3951</td></tr>
+<tr><th class="head">O7</th><td>4186</td><td>4435</td><td>4699</td><td>4978</td><td>5274</td><td>5588</td>
+               <td>5920</td><td>6272</td><td>6645</td><td>7040</td><td>7459</td><td>7902</td></tr>
+</tbody></table>
+

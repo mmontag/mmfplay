@@ -1,0 +1,32 @@
+$Id: README.docs,v 1.1 2004/06/29 13:16:37 cmatsuoka Exp $
+
+Copyright.ymf262	YMF262 emulator license from MAME
+
+Mtsu.txt		Documentation of MMF Mtsu chunk (in Japanese)
+			From http://smaf.k1.xrea.com/pc/column/Mtsu.txt
+
+Pat.txt			Gravis Ultrasound patch format description by
+			Max Maischein.
+
+README.player		Some information on MMFplay internals.
+
+fmchips.html		Description of Yamaha FM chips (compares YM2608,
+			YM2151, YMU759, YMU762). Translated with babelfish.
+			From http://saw.minidns.net/sound/
+
+fmchips2.txt		Description of YMF289B, YMF715E, YMF721, YMF724F,
+			translated with babelfish.
+
+ma3.txt			YMU762 description. Translated with babelfish,
+			from http://www.memb.jp/~dearna/ma/ma3/ma3.html
+
+mmf_format.txt		Description of the MMF file format compiled from
+			several sources and my own analysis.
+
+opl3.txt		YMF262 programming info by Vladimir Arnost.
+
+sbi.txt			SBI OPL2/OPL3 instrument format info.
+
+vm3fmt.txt		VM3 file format info in Japanese. From
+			From http://www.mars.dti.ne.jp/~revix/vm3fmt.txt
+

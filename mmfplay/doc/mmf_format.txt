@@ -1,0 +1,1261 @@
+$Id: mmf_format.txt,v 1.1 2004/06/29 13:16:39 cmatsuoka Exp $
+
+MMF FILE FORMAT DESCRIPTION
+===========================
+
+
+<file organization>
+
+<chunks>
+
+MMMD
+CNTI
+OPDA
+  Dch
+MTR
+  Mtsu
+  MspI
+  Mtsq
+
+<midi event format>
+
+Sysex for FM instruments
+========================
+
+
+-------------------------------------------------------------------
+F0 1E				SysEx, length 30
+43				Yamaha vendor ID
+79 06 7F 01
+7C				Patch set
+01				PCM
+50				Patch 50 (Lead 1 (square))
+00 01
+03 1F 40 78
+00 00 70 70 00 00 00 00
+00 07 2F 07 00 2F 00
+F7				End of SysEx
+-------------------------------------------------------------------
+F0 2F				SysEx, length 47
+43				Yamaha vendor ID
+79 06 7F 01
+7C				Patch set
+00				FM
+00				Patch 0 (Acoustic Grand Piano)
+00 00
+06 00 79 45			Voice data
+33 03 3A 39 06 00 10 03		OP1
+32 03 4B 00 02 05 10 00		OP2
+32 13 11 1F 06 00 10 00		OP3
+32 03 4A 14 00 05 10 00		OP4
+F7				End of SysEx
+-------------------------------------------------------------------
+F0 2F				SysEx, length 47
+43				Yamaha vendor ID
+79 06 7F 01
+7C				Patch set
+00				FM
+61				Patch 61 (FX 2 (soundtrack))
+00 00
+02 00 79 43			Voice data
+13 32 21 72 03 44 10 06		OP1
+33 64 14 68 22 44 40 00		OP2
+23 33 32 5A 06 44 10 00		OP3
+13 01 32 00 00 44 20 00		OP4
+F7				End of SysEx
+-------------------------------------------------------------------
+F0 1F				SysEx, length 31
+43				Yamaha vendor ID
+79 06 7F 01
+7C				Patch set
+01				PCM
+1D				Patch 1d (Overdriven Guitar)
+00 00
+03 00 79 40
+27 33 72 14 06 46 20 47
+17 03 72 38 00 41 10 40
+F7				End of SysEx
+-------------------------------------------------------------------
+F0 1E				SysEx, length 30
+43				Yamaha vendor ID
+79 06 7F 01
+7D				Drum set?
+00 00
+24				Drum note?
+01				PCM?
+23 2E 60
+79 00 08 70 70 02 10 00
+00 00 03 29 03 60 29 00
+F7				End of SysEx
+-------------------------------------------------------------------
+F0 2F				SysEx, length 47
+43				Yamaha vendor ID
+79 06 7F 01
+7D				Drum set?
+00 00
+1B				Drum note?
+00				FM
+02 45 79 65			Voice data
+08 00 70 00 06 44 40 07		OP1
+68 48 49 00 22 44 60 68		OP2
+48 7A 3D 24 0E 44 00 38		OP3
+38 38 0D 02 00 44 00 00		OP4
+F7				End of SysEx
+-------------------------------------------------------------------
+F0 1E				SysEx, length 30
+43				Yamaha vendor ID
+79 06 7F 01
+7D				Drum set?
+00 00
+29				Drum note?
+01				PCM?
+03 1F 40 41 00
+58 70 70 02 10 00 00 00
+0A 54 0D 60 45 02
+F7				End of SysEx
+-------------------------------------------------------------------
+F0 1E 43 79 06 7F 01 7D 00 00 2D 01
+23 30 54 71 00 58 70 70 02 10 00 00 00 0A 54 0D
+60 45 02 F7
+-------------------------------------------------------------------
+F0 1E 43 79 06 7F 01 7C 01 3E 00 01
+03 1F 40 78 00 00 70 70 00 00 00 00 00 08 57 08
+00 57 01 F7
+-------------------------------------------------------------------
+F0 2F 43 79 06 7F 01 7C 00 28 00 00
+06 00 79 47 02 25 61 0E 02 50 02 04 02 08 55 74
+06 00 20 00 02 25 61 06 06 13 13 00 02 26 60 06
+00 03 27 00 F7
+-------------------------------------------------------------------
+F0 2F 43 79 06 7F 01 7C 00 3A 00
+00 16 00 79 42 02 44 70 02 06 30 00 00 02 45 70
+01 06 00 10 20 02 45 51 1E 06 30 31 48 02 41 70
+1E 00 30 20 20 F7
+-------------------------------------------------------------------
+
+
+
+FM Instrument format
+====================
+
+Reference:
+http://smaf.k1.xrea.com/pc/column/Mtsu.txt
+http://www.mars.dti.ne.jp/~revix/vm3fmt.txt
+
+Instrument data:
+
+	+---+---+---+---+---+---+---+---+
+	| 0 | 0 |PNc|FQx|SRc|RRc|ARc|TLc|
+	+---+---+---+---+---+---+---+---+
+        | 0 |   Pitch (FM drum mode)    |
+	+---+---+---+---+---+---+---+---+
+	| 0 |      PAN      |    OCT    |
+	+---+---+---+---+---+---+---+---+
+	|  LFO  |PE |  ??   |    ALG    |	0 FQ ??? ALG
+	+---+---+---+---+---+---+---+---+
+
+For operators 1, 2, 3, 4:
+
+	+---+---+---+---+---+---+---+---+
+	| 0 |     SR    |XOF| ? |SUS|KSR|
+	+---+---+---+---+---+---+---+---+
+	| 0 |     RR    |      DR       |
+	+---+---+---+---+---+---+---+---+
+	| 0 |     AR    |      SL       |
+	+---+---+---+---+---+---+---+---+
+	| 0 |         TL        |  KSL  |
+	+---+---+---+---+---+---+---+---+
+	| 0 | 0 |MLc|WFc|SRc|RRc|ARc|TLc|
+	+---+---+---+---+---+---+---+---+
+	| 0 |  AM   |AMc| 0 |  VI   |VIc|
+	+---+---+---+---+---+---+---+---+
+	| 0 |    MUL    | 0 |     DT    |
+	+---+---+---+---+---+---+---+---+
+	| 0 |      WS       |     FB    |
+	+---+---+---+---+---+---+---+---+
+
+PAN = Pan
+LFO = Low frequency oscillator
+PE  = ?
+ALG = Algorithm
+XOF = ?
+SUS = Sustain on/off
+KSR = Keyboard scaling enable
+SR  = ?
+AR  = Attack rate
+DR  = Decay rate
+SL  = Sustain level
+TL  = Output level
+KSL = Keyboard scaling rate
+RR  = Release rate
+AM  = Tremolo depth
+AMc = Tremolo enable
+VI  = Vibrato depth
+VIc = Vibrato enable
+MUL = Frequency multiplier
+DT  = Detune
+WS  = Waveform selection
+FB  = Feedback
+
+
+File example
+============
+
+A complete dump of MachineWoman.mmf follows.
+
+MMFplay version 0.0 (built Jun 24 2004 14:15:46 by claudio@damien.conectiva)
+
+MMF file structure for ../MachineWoman.mmf
+|   
++---Chunk: 4d 4d 4d 44 [MMMD]
+    Size: 7408
+    SMAF file
+    |   
+    +---Chunk: 43 4e 54 49 [CNTI]
+    |   Size: 5
+    |   Contents info
+    |   * Contents class: 00
+    |   * Contents type: 32
+    |   * Contents code type: 01
+    |   * Copy status: fd
+    |   * Copy counts: 00
+    |   
+    +---Chunk: 4f 50 44 41 [OPDA]
+    |   Size: 135
+    |   Optional data chunk
+    |   |   
+    |   +---Chunk: 44 63 68 01 [Dch]
+    |   |   Size: 87
+    |   |   DchX chunk
+    |   |   |   
+    |   |   +---Chunk16: 53 54 [ST]
+    |   |   |   Size: 13
+    |   |   |   * Song title: Machine Woman
+    |   |   |   
+    |   |   +---Chunk16: 43 41 [CA]
+    |   |   |   Size: 21
+    |   |   |   * Category: SMAF MA-3 Sample Data
+    |   |   |   
+    |   |   +---Chunk16: 43 52 [CR]
+    |   |       Size: 41
+    |   |       * Copyright: Copyright(c) 2002-2004 YAMAHA CORPORATION
+    |   |   
+    |   +---Chunk: 44 63 68 ffffffff [Dchÿ]
+    |       Size: 32
+    |       DchX chunk
+    |       |   
+    |       +---Chunk16: 45 53 [ES]
+    |       |   Size: 1
+    |       |   * ES data: f8 
+    |       |   
+    |       +---Chunk16: 41 53 [AS]
+    |       |   Size: 3
+    |       |   * AS data: 00 61 01 
+    |       |   
+    |       +---Chunk16: 41 30 [A0]
+    |       |   Size: 6
+    |       |   * A0 data: Y931BE
+    |       |   
+    |       +---Chunk16: 41 32 [A2]
+    |           Size: 6
+    |           * A2 data: Y931CB
+    |   
+    +---Chunk: 4d 54 52 05 [MTR]
+        Size: 7242
+        Score track chunk
+        * Format type: 02
+        * Sequence type: 00
+        * Timebase D: 02
+        * Timebase G: 02
+        * Channel status: 40 00 20 00 00 10 40 00 00 40 40 40 40 40 40 40 
+        |   
+        +---Chunk: 4d 74 73 75 [Mtsu]
+        |   Size: 2755
+        |   Setup data chunk
+        |   * SysEx (06) Yamaha: 79 06 7f 7f f7 [06]
+        |   * SysEx (1e) Yamaha: Patch WT 50 (Lead 1 (square))
+        |   * SysEx (2f) Yamaha: Patch FM 00 (Acoustic Grand Piano)
+        |   * SysEx (2f) Yamaha: Patch FM 61 (FX 2 (soundtrack))
+        |   * SysEx (1f) Yamaha: Patch WT 1d (Overdriven Guitar)
+        |   * SysEx (1e) Yamaha: Drum 
+        |   * SysEx (2f) Yamaha: Drum 
+        |   * SysEx (1e) Yamaha: Drum 
+        |   * SysEx (1e) Yamaha: Drum 
+        |   * SysEx (1e) Yamaha: Patch WT 3e (SynthBrass 1)
+        |   * SysEx (2f) Yamaha: Patch FM 28 (Violin)
+        |   * SysEx (2f) Yamaha: Patch FM 3a (Tuba)
+        |   * SysEx (424) Yamaha: 79 06 7f 03 00 00 36 77 77 3f 71 .. f7 [424]
+        |   * SysEx (4d2) Yamaha: 79 06 7f 03 01 00 39 12 4f 7f 76 .. f7 [4d2]
+        |   * SysEx (07) Yamaha: 79 06 7f 07 00 f7 [07]
+        |   
+        +---Chunk: 4d 73 70 49 [MspI]
+        |   Size: 16
+        |   Seek & Phrase Info chunk
+        |   * st: 00 00 e2 2c 
+        |   * sp: 00 11 44 2c 
+        |   
+        +---Chunk: 4d 74 73 71 [Mtsq]
+            Size: 4427
+            Sequence data chunk
+            00: SysEx (07) Yamaha: 79 06 7f 00 64 f7 [07]
+            05: CH01 Controller: ctr00 value 7c
+            00: CH01 Controller: ctr20 value 01
+            00: CH01 Program 50 (Lead 1 (square))
+            00: CH02 Controller: ctr00 value 7c
+            00: CH02 Controller: ctr20 value 01
+            00: CH02 Program 3e (SynthBrass 1)
+            00: CH03 Controller: ctr00 value 7c
+            00: CH03 Controller: ctr20 value 00
+            00: CH03 Program 00 (Acoustic Grand Piano)
+            00: CH04 Controller: ctr00 value 7c
+            00: CH04 Controller: ctr20 value 00
+            00: CH04 Program 61 (FX 2 (soundtrack))
+            00: CH05 Controller: ctr00 value 7c
+            00: CH05 Controller: ctr20 value 01
+            00: CH05 Program 1d (Overdriven Guitar)
+            00: CH07 Controller: ctr00 value 7c
+            00: CH07 Controller: ctr20 value 00
+            00: CH07 Program 3a (Tuba)
+            00: CH08 Controller: ctr00 value 7c
+            00: CH08 Controller: ctr20 value 00
+            00: CH08 Program 28 (Violin)
+            00: CH09 Controller: ctr00 value 7d
+            00: CH09 Controller: ctr20 value 00
+            00: CH09 Program 00 (Acoustic Grand Piano)
+            03: CH01 Controller: Main volume value 7f
+            00: CH02 Controller: Main volume value 78
+            00: CH03 Controller: Main volume value 64
+            00: CH04 Controller: Main volume value 64
+            00: CH05 Controller: Main volume value 46
+            00: CH07 Controller: Main volume value 5a
+            00: CH08 Controller: Main volume value 50
+            00: CH09 Controller: Main volume value 7f
+            02: CH01 Controller: Pan value 40
+            00: CH02 Controller: Pan value 40
+            00: CH03 Controller: Pan value 64
+            00: CH04 Controller: Pan value 1e
+            00: CH05 Controller: Pan value 1e
+            00: CH07 Controller: Pan value 40
+            00: CH08 Controller: Pan value 40
+            00: CH09 Controller: Pan value 40
+            03: CH01 Controller: ctr01 value 00
+            00: CH02 Controller: ctr01 value 00
+            00: CH03 Controller: ctr01 value 00
+            00: CH04 Controller: ctr01 value 00
+            00: CH05 Controller: ctr01 value 00
+            00: CH07 Controller: ctr01 value 00
+            00: CH08 Controller: ctr01 value 00
+            00: CH09 Controller: ctr01 value 00
+            03: CH01 Pitchbend 0040
+            00: CH02 Pitchbend 0040
+            00: CH03 Pitchbend 0040
+            00: CH04 Pitchbend 0040
+            00: CH05 Pitchbend 0040
+            00: CH07 Pitchbend 0040
+            00: CH09 Pitchbend 0040
+            1e3: Sequence number 00
+            01: CH01 Note On: Note G 3 (43) Vel 7f Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 7f Gate Time 2d
+            00: CH04 Note On: Note C 1 (24) Vel 7f Gate Time 2d
+            00: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0c
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH01 Note On: Note C 4 (48) Vel 3a
+            00: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            20: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            1f: CH01 Note On: Note C 4 (48) Vel 64 Gate Time 39
+            00: CH03 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH04 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 3c Gate Time 14
+            1f: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 17
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH01 Note On: Note C 4 (48) Vel 32 Gate Time 3a
+            00: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 32 Gate Time 07
+            20: CH03 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            00: CH04 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 5a Gate Time 13
+            1f: CH01 Note On: Note C 4 (48) Vel 14 Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 17
+            1f: CH01 Note On: Note D 4 (4a) Vel 7f Gate Time 39
+            00: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            20: CH01 Note On: Note D 4 (4a) Vel 6b Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0f
+            1f: CH01 Note On: Note A#3 (46) Vel 7f Gate Time 39
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 11
+            1f: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note A#3 (46) Vel 32 Gate Time 20
+            00: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            20: CH01 Note On: Note A#3 (46) Vel 1e Gate Time 1c
+            00: CH05 Note On: Note C 5 (54) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            1f: CH01 Note On: Note G 3 (43) Vel 7f Gate Time 39
+            00: CH03 Note On: Note G 1 (2b) Vel 7f Gate Time 1c
+            00: CH04 Note On: Note G 1 (2b) Vel 7f Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 13
+            1f: CH05 Note On: Note C 5 (54) Vel 24 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note C 4 (48) Vel 1d
+            00: CH03 Note On: Note C 1 (24) Vel 2d
+            00: CH04 Note On: Note C 1 (24) Vel 2d
+            00: CH05 Note On: Note C 4 (48) Vel 12 Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note C 4 (48) Vel 32 Gate Time 39
+            00: CH05 Note On: Note C 4 (48) Vel 0a Gate Time 0f
+            1f: CH03 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH04 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0f
+            1f: CH01 Note On: Note C 4 (48) Vel 1e Gate Time 39
+            00: CH02 Note On: Note C 3 (3c) Vel 07 Gate Time 1d
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 13
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH02 Note On: Note D 3 (3e) Vel 0e Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            00: CH04 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            20: CH01 Note On: Note C 4 (48) Vel 0f Gate Time 1c
+            00: CH02 Note On: Note E 3 (40) Vel 17 Gate Time 1c
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            1f: CH01 Note On: Note F 4 (4d) Vel 7f Gate Time 39
+            00: CH02 Note On: Note F 3 (41) Vel 1d Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            1f: CH02 Note On: Note G 3 (43) Vel 25 Gate Time 1d
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note F 4 (4d) Vel 32 Gate Time 1d
+            00: CH02 Note On: Note A 3 (45) Vel 2c Gate Time 1d
+            20: CH01 Note On: Note D#4 (4b) Vel 7f Gate Time 39
+            00: CH02 Note On: Note B 3 (47) Vel 34 Gate Time 1c
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 68 Gate Time 0c
+            1f: CH02 Note On: Note C 4 (48) Vel 43 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            1f: CH01 Note On: Note D#4 (4b) Vel 32 Gate Time 39
+            00: CH02 Note On: Note D 4 (4a) Vel 52 Gate Time 1d
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH02 Note On: Note E 4 (4c) Vel 60 Gate Time 1d
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note D#4 (4b) Vel 14 Gate Time 39
+            00: CH02 Note On: Note F 4 (4d) Vel 70 Gate Time 1c
+            1f: CH02 Note On: Note G 4 (4f) Vel 7a Gate Time 1c
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0e
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note G 3 (43) Vel 7f Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 7f Gate Time 2d
+            00: CH04 Note On: Note C 1 (24) Vel 7f Gate Time 2d
+            00: CH05 Note On: Note G 5 (5b) Vel 78 Gate Time 10
+            00: CH08 Note On: Note D#5 (57) Vel 78 Gate Time 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0c
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 3a
+            00: CH05 Note On: Note G 5 (5b) Vel 6c Gate Time 10
+            00: CH08 Note On: Note D#5 (57) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            20: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 6b Gate Time 39
+            00: CH03 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH04 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH05 Note On: Note G 5 (5b) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note E 5 (58) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 3c Gate Time 14
+            1f: CH05 Note On: Note G 4 (4f) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 17
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 32 Gate Time 3a
+            00: CH05 Note On: Note G 5 (5b) Vel 6c Gate Time 10
+            00: CH08 Note On: Note E 5 (58) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 32 Gate Time 07
+            18: CH08 Pitchbend 0040
+            08: CH03 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            00: CH04 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            00: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note F 5 (59) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 5a Gate Time 13
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 1e Gate Time 1c
+            00: CH05 Note On: Note G 4 (4f) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note F 5 (59) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 17
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note D 4 (4a) Vel 7f Gate Time 39
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH08 Note On: Note F#5 (5a) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH05 Note On: Note G 5 (5b) Vel 78 Gate Time 10
+            18: CH08 Pitchbend 0250
+            08: CH01 Note On: Note D 4 (4a) Vel 6b Gate Time 1c
+            00: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note F#5 (5a) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note A#3 (46) Vel 7f Gate Time 39
+            00: CH05 Note On: Note G 5 (5b) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note G 5 (5b) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 11
+            1f: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note A#3 (46) Vel 32 Gate Time 20
+            00: CH05 Note On: Note G 4 (4f) Vel 78 Gate Time 10
+            00: CH08 Note On: Note G 5 (5b) Vel 15
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note A#3 (46) Vel 1e Gate Time 1c
+            00: CH05 Note On: Note G 5 (5b) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note G#5 (5c) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note G 3 (43) Vel 7f Gate Time 39
+            00: CH05 Note On: Note G 4 (4f) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note G#5 (5c) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 13
+            17: CH08 Pitchbend 0040
+            08: CH05 Note On: Note G 5 (5b) Vel 24 Gate Time 10
+            00: CH08 Note On: Note A 5 (5d) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 1d
+            00: CH03 Note On: Note C 1 (24) Vel 7f Gate Time 2d
+            00: CH04 Note On: Note C 1 (24) Vel 7f Gate Time 2d
+            00: CH05 Note On: Note G 4 (4f) Vel 12 Gate Time 10
+            00: CH08 Note On: Note A 5 (5d) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note C 4 (48) Vel 32 Gate Time 39
+            00: CH05 Note On: Note G 4 (4f) Vel 0a Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH03 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH04 Note On: Note C 1 (24) Vel 68 Gate Time 24
+            00: CH08 Note On: Note A#5 (5e) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0f
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 1e Gate Time 39
+            00: CH02 Note On: Note C 3 (3c) Vel 07 Gate Time 1d
+            00: CH08 Note On: Note A#5 (5e) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 13
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH02 Note On: Note D 3 (3e) Vel 0e Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            00: CH04 Note On: Note C 1 (24) Vel 4b Gate Time 30
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 0a Gate Time 1c
+            00: CH02 Note On: Note E 3 (40) Vel 17 Gate Time 1c
+            00: CH08 Note On: Note B 5 (5f) Vel 14
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note F 4 (4d) Vel 7f Gate Time 39
+            00: CH02 Note On: Note F 3 (41) Vel 1d Gate Time 1c
+            00: CH08 Note On: Note B 5 (5f) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            17: CH08 Pitchbend 0040
+            08: CH02 Note On: Note G 3 (43) Vel 25 Gate Time 1d
+            00: CH08 Note On: Note C 6 (60) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note F 4 (4d) Vel 32 Gate Time 1d
+            00: CH02 Note On: Note A 3 (45) Vel 2c Gate Time 1d
+            00: CH08 Note On: Note C 6 (60) Vel 15
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note D#4 (4b) Vel 7f Gate Time 39
+            00: CH02 Note On: Note B 3 (47) Vel 34 Gate Time 1c
+            00: CH08 Note On: Note C#6 (61) Vel 14
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 68 Gate Time 0c
+            17: CH08 Pitchbend 0250
+            08: CH02 Note On: Note C 4 (48) Vel 43 Gate Time 1c
+            00: CH08 Note On: Note C#6 (61) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note D#4 (4b) Vel 32 Gate Time 39
+            00: CH02 Note On: Note D 4 (4a) Vel 52 Gate Time 1d
+            00: CH08 Note On: Note D 6 (62) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH02 Note On: Note E 4 (4c) Vel 60 Gate Time 1d
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            18: CH08 Pitchbend 0250
+            08: CH01 Note On: Note D#4 (4b) Vel 1e Gate Time 39
+            00: CH02 Note On: Note F 4 (4d) Vel 70 Gate Time 1c
+            00: CH08 Note On: Note D 6 (62) Vel 14
+            17: CH08 Pitchbend 0040
+            08: CH02 Note On: Note G 4 (4f) Vel 7a Gate Time 1c
+            00: CH08 Note On: Note D#6 (63) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0e
+            1f: CH01 Note On: Note G 3 (43) Vel 58 Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 78 Gate Time 39
+            00: CH04 Note On: Note C 1 (24) Vel 78 Gate Time 39
+            00: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            00: CH07 Note On: Note C 3 (3c) Vel 50 Gate Time 1ec
+            00: CH07 Note On: Note G 3 (43) Vel 1ec
+            00: CH07 Note On: Note D#3 (3f) Vel 1ec
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0c
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            20: CH01 Note On: Note G 3 (43) Vel 23 Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            1f: CH01 Note On: Note G 3 (43) Vel 4a Gate Time 1c
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 3c Gate Time 14
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 17
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH01 Note On: Note G 3 (43) Vel 23 Gate Time 1d
+            00: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 32 Gate Time 07
+            20: CH01 Note On: Note G 3 (43) Vel 58 Gate Time 1c
+            00: CH03 Note On: Note C 1 (24) Vel 1c
+            00: CH04 Note On: Note C 1 (24) Vel 1c
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 5a Gate Time 13
+            1f: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 17
+            1f: CH01 Note On: Note G 3 (43) Vel 15 Gate Time 1d
+            00: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH01 Note On: Note G 3 (43) Vel 4a Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            20: CH03 Note On: Note C 2 (30) Vel 14
+            00: CH04 Note On: Note C 2 (30) Vel 14
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0f
+            1f: CH01 Note On: Note G 3 (43) Vel 15 Gate Time 1c
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 11
+            1f: CH02 Note On: Note A 3 (45) Vel 1d
+            00: CH03 Note On: Note C 1 (24) Vel 2f
+            00: CH04 Note On: Note C 1 (24) Vel 2f
+            00: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            20: CH01 Note On: Note G 3 (43) Vel 58 Gate Time 1c
+            00: CH03 Note On: Note C 2 (30) Vel 14
+            00: CH04 Note On: Note C 2 (30) Vel 14
+            00: CH05 Note On: Note C 5 (54) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            1f: CH01 Note On: Note G 3 (43) Vel 15 Gate Time 1c
+            00: CH02 Note On: Note C 4 (48) Vel 1c
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 13
+            1f: CH01 Note On: Note C 4 (48) Vel 58 Gate Time 1d
+            00: CH03 Note On: Note F 1 (29) Vel 39
+            00: CH04 Note On: Note F 1 (29) Vel 39
+            00: CH05 Note On: Note F 4 (4d) Vel 78 Gate Time 10
+            00: CH07 Note On: Note C 4 (48) Vel f2
+            00: CH07 Note On: Note D#4 (4b) Vel f5
+            00: CH07 Note On: Note G#3 (44) Vel f2
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH05 Note On: Note F 5 (59) Vel 6c Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note C 4 (48) Vel 23 Gate Time 1c
+            00: CH05 Note On: Note F 4 (4d) Vel 5a Gate Time 0f
+            1f: CH01 Note On: Note C 4 (48) Vel 58 Gate Time 1c
+            00: CH03 Note On: Note F 1 (29) Vel 15
+            00: CH04 Note On: Note F 1 (29) Vel 15
+            00: CH05 Note On: Note F 4 (4d) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0f
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note F 5 (59) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 13
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note C 4 (48) Vel 23 Gate Time 1d
+            00: CH03 Note On: Note F 1 (29) Vel 15
+            00: CH04 Note On: Note F 1 (29) Vel 15
+            00: CH05 Note On: Note F 4 (4d) Vel 6c Gate Time 10
+            20: CH01 Note On: Note C 4 (48) Vel 15 Gate Time 1c
+            00: CH03 Note On: Note F 2 (35) Vel 17
+            00: CH04 Note On: Note F 2 (35) Vel 17
+            00: CH05 Note On: Note F 4 (4d) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            1f: CH03 Note On: Note F 1 (29) Vel 15
+            00: CH04 Note On: Note F 1 (29) Vel 15
+            00: CH05 Note On: Note F 5 (59) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            1f: CH01 Note On: Note D 4 (4a) Vel 58 Gate Time 1d
+            00: CH03 Note On: Note G 1 (2b) Vel 34
+            00: CH04 Note On: Note G 1 (2b) Vel 34
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH07 Note On: Note D 4 (4a) Vel f5
+            00: CH07 Note On: Note G 3 (43) Vel f5
+            00: CH07 Note On: Note A#3 (46) Vel f2
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH05 Note On: Note G 5 (5b) Vel 78 Gate Time 10
+            20: CH01 Note On: Note D 4 (4a) Vel 38 Gate Time 1c
+            00: CH03 Note On: Note G 1 (2b) Vel 14
+            00: CH04 Note On: Note G 1 (2b) Vel 14
+            00: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 68 Gate Time 0c
+            1f: CH01 Note On: Note D 4 (4a) Vel 58 Gate Time 1c
+            00: CH05 Note On: Note G 5 (5b) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note D 4 (4a) Vel 38 Gate Time 1d
+            00: CH03 Note On: Note G 1 (2b) Vel 15
+            00: CH04 Note On: Note G 1 (2b) Vel 15
+            00: CH05 Note On: Note G 4 (4f) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note D 4 (4a) Vel 23 Gate Time 1c
+            00: CH03 Note On: Note G 2 (37) Vel 14
+            00: CH04 Note On: Note G 2 (37) Vel 14
+            00: CH05 Note On: Note G 5 (5b) Vel 5a Gate Time 0f
+            1f: CH02 Note On: Note A 3 (45) Vel 1c
+            00: CH03 Note On: Note G 1 (2b) Vel 15
+            00: CH04 Note On: Note G 1 (2b) Vel 15
+            00: CH05 Note On: Note G 4 (4f) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0e
+            1f: CH01 Note On: Note G 3 (43) Vel 58 Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 39
+            00: CH04 Note On: Note C 1 (24) Vel 39
+            00: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            00: CH07 Note On: Note C 3 (3c) Vel 1ec
+            00: CH07 Note On: Note G 3 (43) Vel 1ec
+            00: CH07 Note On: Note D#3 (3f) Vel 1ec
+            00: CH08 Note On: Note D#5 (57) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0c
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH08 Note On: Note D#5 (57) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            20: CH01 Note On: Note G 3 (43) Vel 23 Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note G 3 (43) Vel 4a Gate Time 1c
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note E 5 (58) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 3c Gate Time 14
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 17
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note G 3 (43) Vel 23 Gate Time 1d
+            00: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH08 Note On: Note E 5 (58) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 32 Gate Time 07
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note G 3 (43) Vel 58 Gate Time 1c
+            00: CH03 Note On: Note C 1 (24) Vel 1c
+            00: CH04 Note On: Note C 1 (24) Vel 1c
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note F 5 (59) Vel 14
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 5a Gate Time 13
+            17: CH08 Pitchbend 0250
+            08: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note F 5 (59) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 17
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note G 3 (43) Vel 15 Gate Time 1d
+            00: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH08 Note On: Note F#5 (5a) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note G 3 (43) Vel 4a Gate Time 1d
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            18: CH08 Pitchbend 0250
+            08: CH03 Note On: Note C 2 (30) Vel 14
+            00: CH04 Note On: Note C 2 (30) Vel 14
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note F#5 (5a) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note G 3 (43) Vel 15 Gate Time 1c
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note G 5 (5b) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 11
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH03 Note On: Note C 1 (24) Vel 2f
+            00: CH04 Note On: Note C 1 (24) Vel 2f
+            00: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            00: CH08 Note On: Note G 5 (5b) Vel 15
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note G 3 (43) Vel 58 Gate Time 1c
+            00: CH03 Note On: Note C 2 (30) Vel 14
+            00: CH04 Note On: Note C 2 (30) Vel 14
+            00: CH05 Note On: Note C 5 (54) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note G#5 (5c) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note G 3 (43) Vel 15 Gate Time 1c
+            00: CH02 Note On: Note A 3 (45) Vel 1c
+            00: CH03 Note On: Note C 1 (24) Vel 15
+            00: CH04 Note On: Note C 1 (24) Vel 15
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note G#5 (5c) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 13
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 58 Gate Time 1d
+            00: CH03 Note On: Note F 1 (29) Vel 39
+            00: CH04 Note On: Note F 1 (29) Vel 39
+            00: CH05 Note On: Note F 4 (4d) Vel 78 Gate Time 10
+            00: CH07 Note On: Note C 4 (48) Vel f2
+            00: CH07 Note On: Note D#4 (4b) Vel f5
+            00: CH07 Note On: Note G#3 (44) Vel f2
+            00: CH08 Note On: Note A 5 (5d) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH05 Note On: Note F 5 (59) Vel 6c Gate Time 10
+            00: CH08 Note On: Note A 5 (5d) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note C 4 (48) Vel 23 Gate Time 1c
+            00: CH05 Note On: Note F 4 (4d) Vel 5a Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 58 Gate Time 1c
+            00: CH03 Note On: Note F 1 (29) Vel 15
+            00: CH04 Note On: Note F 1 (29) Vel 15
+            00: CH05 Note On: Note F 4 (4d) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note A#5 (5e) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0f
+            17: CH08 Pitchbend 0250
+            08: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note F 5 (59) Vel 78 Gate Time 10
+            00: CH08 Note On: Note A#5 (5e) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 13
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note C 4 (48) Vel 23 Gate Time 1d
+            00: CH02 Note On: Note A 3 (45) Vel 0e Gate Time 1d
+            00: CH03 Note On: Note F 1 (29) Vel 15
+            00: CH04 Note On: Note F 1 (29) Vel 15
+            00: CH05 Note On: Note F 4 (4d) Vel 6c Gate Time 10
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 15 Gate Time 1c
+            00: CH02 Note On: Note C 4 (48) Vel 17 Gate Time 1c
+            00: CH03 Note On: Note F 2 (35) Vel 17
+            00: CH04 Note On: Note F 2 (35) Vel 17
+            00: CH05 Note On: Note F 4 (4d) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note B 5 (5f) Vel 14
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            17: CH08 Pitchbend 0250
+            08: CH02 Note On: Note A 3 (45) Vel 1d Gate Time 1c
+            00: CH03 Note On: Note F 1 (29) Vel 15
+            00: CH04 Note On: Note F 1 (29) Vel 15
+            00: CH05 Note On: Note F 5 (59) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note B 5 (5f) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note D 4 (4a) Vel 58 Gate Time 1d
+            00: CH02 Note On: Note C 4 (48) Vel 25 Gate Time 1d
+            00: CH03 Note On: Note G 1 (2b) Vel 34
+            00: CH04 Note On: Note G 1 (2b) Vel 34
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH07 Note On: Note D 4 (4a) Vel f5
+            00: CH07 Note On: Note G 3 (43) Vel f5
+            00: CH07 Note On: Note A#3 (46) Vel f2
+            00: CH08 Note On: Note C 6 (60) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH02 Note On: Note A 3 (45) Vel 2c Gate Time 1d
+            00: CH05 Note On: Note G 5 (5b) Vel 78 Gate Time 10
+            00: CH08 Note On: Note C 6 (60) Vel 15
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note D 4 (4a) Vel 23 Gate Time 1c
+            00: CH02 Note On: Note F 3 (41) Vel 34 Gate Time 1c
+            00: CH03 Note On: Note G 1 (2b) Vel 14
+            00: CH04 Note On: Note G 1 (2b) Vel 14
+            00: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note C#6 (61) Vel 14
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 68 Gate Time 0c
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note D 4 (4a) Vel 58 Gate Time 1c
+            00: CH02 Note On: Note E 3 (40) Vel 43 Gate Time 1c
+            00: CH05 Note On: Note G 5 (5b) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note C#6 (61) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            17: CH08 Pitchbend 0040
+            08: CH02 Note On: Note C 4 (48) Vel 7a Gate Time 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH08 Note On: Note D 6 (62) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note D 4 (4a) Vel 23 Gate Time 1d
+            00: CH02 Note On: Note A 3 (45) Vel 60 Gate Time 1d
+            00: CH03 Note On: Note G 1 (2b) Vel 15
+            00: CH04 Note On: Note G 1 (2b) Vel 15
+            00: CH05 Note On: Note G 4 (4f) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            18: CH08 Pitchbend 0250
+            08: CH01 Note On: Note D 4 (4a) Vel 15 Gate Time 1c
+            00: CH02 Note On: Note G 3 (43) Vel 70 Gate Time 1c
+            00: CH03 Note On: Note G 2 (37) Vel 14
+            00: CH04 Note On: Note G 2 (37) Vel 14
+            00: CH05 Note On: Note G 5 (5b) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note D 6 (62) Vel 14
+            17: CH08 Pitchbend 0040
+            08: CH02 Note On: Note F 3 (41) Vel 7a Gate Time 1c
+            00: CH03 Note On: Note G 1 (2b) Vel 15
+            00: CH04 Note On: Note G 1 (2b) Vel 15
+            00: CH05 Note On: Note G 4 (4f) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note D#6 (63) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0e
+            1f: CH01 Note On: Note G 4 (4f) Vel 7f Gate Time 1d
+            00: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0c
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH01 Note On: Note C 5 (54) Vel 3a
+            00: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            20: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            1f: CH01 Note On: Note G 4 (4f) Vel 32 Gate Time 39
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 3c Gate Time 14
+            1f: CH01 Note On: Note C 5 (54) Vel 39
+            00: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 17
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH05 Note On: Note C 5 (54) Vel 6c Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 32 Gate Time 07
+            20: CH01 Note On: Note G 4 (4f) Vel 1e Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 5a Gate Time 13
+            1f: CH01 Note On: Note C 5 (54) Vel 1c
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 17
+            1f: CH01 Note On: Note D 4 (4a) Vel 7f Gate Time 39
+            00: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note F 1 (29) Vel 78 Gate Time 75
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            1f: CH05 Note On: Note C 5 (54) Vel 78 Gate Time 10
+            20: CH01 Note On: Note D 4 (4a) Vel 32 Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0f
+            1f: CH01 Note On: Note A#3 (46) Vel 7f Gate Time 39
+            00: CH05 Note On: Note C 5 (54) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 11
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note C 4 (48) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note A#4 (52) Vel 32 Gate Time 3a
+            00: CH05 Note On: Note C 4 (48) Vel 78 Gate Time 10
+            20: CH01 Note On: Note A#3 (46) Vel 1e Gate Time 1c
+            00: CH05 Note On: Note C 5 (54) Vel 5a Gate Time 0f
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            1f: CH01 Note On: Note G 4 (4f) Vel 7f Gate Time 1c
+            00: CH02 Note On: Note A 3 (45) Vel 1c
+            00: CH05 Note On: Note C 4 (48) Vel 48 Gate Time 0f
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 13
+            1f: CH01 Note On: Note C 5 (54) Vel 39
+            00: CH05 Note On: Note C 5 (54) Vel 24 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH05 Note On: Note C 4 (48) Vel 12 Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note G 4 (4f) Vel 32 Gate Time 1c
+            00: CH05 Note On: Note C 4 (48) Vel 0a Gate Time 0f
+            1f: CH01 Note On: Note C 5 (54) Vel 39
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0f
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 13
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note G 4 (4f) Vel 1e Gate Time 1d
+            20: CH01 Note On: Note C 5 (54) Vel 1c
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            1f: CH01 Note On: Note A#4 (52) Vel 7f Gate Time 39
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            1f: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH01 Note On: Note A#4 (52) Vel 32 Gate Time 1d
+            20: CH01 Note On: Note G#4 (50) Vel 7f Gate Time 39
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 68 Gate Time 0c
+            1f: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            1f: CH01 Note On: Note G#4 (50) Vel 32 Gate Time 39
+            00: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0b
+            00: CH09 Note On: Note A 1 (2d) Vel 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note G#4 (50) Vel 1e Gate Time 39
+            1f: CH02 Note On: Note A 3 (45) Vel 1c
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0e
+            1f: CH01 Note On: Note G 4 (4f) Vel 7f Gate Time 15
+            00: CH05 Note On: Note G 5 (5b) Vel 78 Gate Time 10
+            00: CH08 Note On: Note D#5 (57) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0c
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note G 3 (43) Vel 32 Gate Time 15
+            00: CH05 Note On: Note G 5 (5b) Vel 6c Gate Time 10
+            00: CH08 Note On: Note D#5 (57) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            20: CH01 Note On: Note C 4 (48) Vel 7f Gate Time 1c
+            00: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 50 Gate Time 39
+            00: CH05 Note On: Note G 5 (5b) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note E 5 (58) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 3c Gate Time 14
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 78 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 17
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 32 Gate Time 3a
+            00: CH05 Note On: Note G 5 (5b) Vel 6c Gate Time 10
+            00: CH08 Note On: Note E 5 (58) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 32 Gate Time 07
+            18: CH08 Pitchbend 0040
+            08: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note F 5 (59) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 5a Gate Time 13
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 1e Gate Time 1c
+            00: CH05 Note On: Note G 4 (4f) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note F 5 (59) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 17
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note D 4 (4a) Vel 7f Gate Time 39
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH08 Note On: Note F#5 (5a) Vel 15
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            1f: CH05 Note On: Note G 5 (5b) Vel 78 Gate Time 10
+            18: CH08 Pitchbend 0250
+            08: CH01 Note On: Note D 4 (4a) Vel 50 Gate Time 1c
+            00: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note F#5 (5a) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note A#3 (46) Vel 7f Gate Time 39
+            00: CH05 Note On: Note G 5 (5b) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note G 5 (5b) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 11
+            1f: CH02 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 10
+            00: CH09 Note On: Note C 1 (24) Vel 7f Gate Time 1d
+            00: CH09 Note On: Note A 1 (2d) Vel 78 Gate Time 75
+            00: CH09 Note On: Note F 1 (29) Vel 75
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note A#3 (46) Vel 32 Gate Time 20
+            00: CH05 Note On: Note G 4 (4f) Vel 78 Gate Time 10
+            00: CH08 Note On: Note G 5 (5b) Vel 15
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note A#3 (46) Vel 1e Gate Time 1c
+            00: CH05 Note On: Note G 5 (5b) Vel 5a Gate Time 0f
+            00: CH08 Note On: Note G#5 (5c) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            00: CH09 Note On: Note C 1 (24) Vel 50 Gate Time 1c
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note G 3 (43) Vel 7f Gate Time 39
+            00: CH02 Note On: Note A 3 (45) Vel 1c
+            00: CH05 Note On: Note G 4 (4f) Vel 48 Gate Time 0f
+            00: CH08 Note On: Note G#5 (5c) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 13
+            17: CH08 Pitchbend 0040
+            08: CH08 Note On: Note A 5 (5d) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0b
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 6c Gate Time 10
+            00: CH08 Note On: Note A 5 (5d) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            20: CH01 Note On: Note C 4 (48) Vel 39
+            00: CH05 Note On: Note G 4 (4f) Vel 36 Gate Time 0f
+            17: CH08 Pitchbend 0040
+            08: CH08 Note On: Note A#5 (5e) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0f
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 32 Gate Time 1d
+            00: CH02 Note On: Note C 4 (48) Vel 25 Gate Time 1d
+            00: CH05 Note On: Note G 5 (5b) Vel 2c Gate Time 10
+            00: CH08 Note On: Note A#5 (5e) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 13
+            1f: CH01 Note On: Note C 4 (48) Vel 1e Gate Time 3a
+            00: CH02 Note On: Note A 3 (45) Vel 34 Gate Time 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 3e Gate Time 10
+            18: CH08 Pitchbend 0040
+            08: CH08 Note On: Note B 5 (5f) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 6e Gate Time 0a
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 0a Gate Time 1c
+            00: CH02 Note On: Note G 3 (43) Vel 43 Gate Time 1c
+            00: CH05 Note On: Note G 5 (5b) Vel 50 Gate Time 0f
+            00: CH08 Note On: Note B 5 (5f) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            17: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 14 Gate Time 39
+            00: CH02 Note On: Note C 4 (48) Vel 52 Gate Time 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 5a Gate Time 10
+            00: CH08 Note On: Note C 6 (60) Vel 15
+            17: CH08 Pitchbend 0250
+            08: CH08 Note On: Note C 6 (60) Vel 15
+            18: CH08 Pitchbend 0040
+            08: CH01 Note On: Note C 4 (48) Vel 28 Gate Time 1c
+            00: CH02 Note On: Note A 3 (45) Vel 60 Gate Time 1c
+            00: CH05 Note On: Note G 4 (4f) Vel 6c Gate Time 0f
+            00: CH08 Note On: Note C#6 (61) Vel 14
+            00: CH09 Note On: Note D#0 (1b) Vel 68 Gate Time 0c
+            17: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 3c Gate Time 39
+            00: CH02 Note On: Note G 3 (43) Vel 70 Gate Time 1c
+            00: CH05 Note On: Note G 5 (5b) Vel 0f
+            00: CH08 Note On: Note C#6 (61) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 50 Gate Time 15
+            17: CH08 Pitchbend 0040
+            08: CH08 Note On: Note D 6 (62) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0b
+            1f: CH01 Note On: Note C 4 (48) Vel 50 Gate Time 1d
+            00: CH02 Note On: Note F 3 (41) Vel 1d
+            00: CH05 Note On: Note G 4 (4f) Vel 78 Gate Time 10
+            00: CH09 Note On: Note D#0 (1b) Vel 64 Gate Time 11
+            18: CH08 Pitchbend 0250
+            08: CH01 Note On: Note C 4 (48) Vel 7f Gate Time 39
+            00: CH02 Note On: Note E 3 (40) Vel 7a Gate Time 1c
+            00: CH05 Note On: Note G 5 (5b) Vel 0f
+            00: CH08 Note On: Note D 6 (62) Vel 14
+            17: CH08 Pitchbend 0040
+            08: CH08 Note On: Note D#6 (63) Vel 15
+            00: CH09 Note On: Note D#0 (1b) Vel 78 Gate Time 0e
+            1e: Sequence number 00
+            00: Sequence number 00
+            00: Sequence number 2f
+            00: CH09 Note On: Note A#15 (d6) Vel 00

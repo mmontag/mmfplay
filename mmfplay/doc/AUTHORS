@@ -1,0 +1,26 @@
+
+MMFplay code
+
+* Claudio Matsuoka <claudio@conectiva.com>
+  - Main code
+  - OSS, Solaris, QNX, SDL, BSD, ALSA sound drivers (from Sarien)
+  - OPL3 driver
+
+
+From Sarien (http://sarien.sf.net)
+
+* Keith Hargrove <Keith.Hargrove@Eng.Sun.COM>
+  - Solaris driver fixes (from xmp)
+
+* Joep Grooten <joep@di.nl>
+  - FreeBSD sound driver
+
+* Paul Hill <paul@lagernet.clara.co.uk>
+  - Amiga sound driver
+
+
+From M.A.M.E. (http://mame.net)
+
+* Jarek Burczynski
+  - YMF262 emulator
+

@@ -1,0 +1,13 @@
+
+MMF (Yamaha SMAF) player for Linux
+
+work in progress
+
+TODO:
+
+- fix ymf262 output
+- check possibility of converting ymu762 tones to ymf262
+- support smaf files converted from smf
+- support multi-track midi
+- implement midi controllers
+

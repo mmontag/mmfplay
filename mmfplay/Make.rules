@@ -1,0 +1,69 @@
+# $Id: Make.rules,v 1.1 2004/06/29 13:16:36 cmatsuoka Exp $
+
+CC	= gcc
+CFLAGS	= -g -O0 -Wall
+LD	= gcc
+LDFLAGS	= -g
+RANLIB	= ranlib
+SHELL	= /bin/sh
+
+SOUND_DRIVER = oss
+
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(XCFLAGS) -o$*.o $<
+
+dummy:
+
+distclean::
+	rm -f $(DCFILES)
+
+clean distclean::
+	rm -f *.o *.obj errlist core depend $(CFILES)
+ifdef DDIRS
+	@for i in $(DDIRS); do \
+		(cd $$i; [ -f $(MAKEFILE) ] && $(MAKE) $@) \
+	done; true
+endif
+
+subdirs:
+ifdef DDIRS
+	@for i in $(DDIRS); do \
+		(cd $$i; [ -f $(MAKEFILE) ] && $(MAKE) all) \
+	done; true
+endif
+
+$(OBJS): Makefile
+
+$(LIB): $(LIB)($(OBJS))
+	$(RANLIB) $(LIB)
+
+$(LIB): $(OBJS)
+
+subdist:
+	cp -dp $(DFILES) $(XDFILES) $(DISTDIR)
+ifdef DDIRS
+	for i in $(DDIRS) $(XDDIRS); do \
+		mkdir $(DISTDIR)/$$i; \
+		( cd $$i; \
+		if [ -f $(MAKEFILE) ]; then \
+			$(MAKE) VERSION=$(VERSION) DISTDIR=../$(DISTDIR)/$$i \
+			subdist; \
+		else \
+			for j in *; do \
+				[ -f $$j ] && cp -dp $$j ../$(DISTDIR)/$$i; \
+			done; \
+		fi; ) \
+	done
+endif
+
+depend: Makefile
+	@echo Building dependencies...
+	@$(CC) $(CFLAGS) $(XCFLAGS) -M $(OBJS:.o=.c) >$@
+
+include $(TOPDIR)/Version
+
+ifdef OBJS
+include depend
+endif
+

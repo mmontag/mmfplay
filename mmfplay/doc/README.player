@@ -1,0 +1,71 @@
+$Id: README.player,v 1.1 2004/06/29 13:16:37 cmatsuoka Exp $
+
+
+Architecture:
+
+	+---------------------------------------------+
+        |                 SMAF parser                 |
+	+---------------------------------------------+
+        |       midi player (polyphonic tracks)       |
+	+---------------------------------------------+
+        |       sequencer (monophonic channels)       |
+	+-----------+-----------+---------+-----------+
+	|  YMF262   |  YMU762   |   ...   | softmixer |
+	+-----------+-----------+         +-----------+
+
+Note playing call flow:
+
+play.c:	playmtsq() 
+  player.c: play_midi()
+    player.c: play_midi_tick()
+      player.c: play_midi_event()
+        sequencer.c: seq_set_*()
+    sound.c: play_tick()
+      sequencer.c: seq_tick()
+         
+
+FM synthesizer:
+
+The package currently uses the YMF262 (OPL3) FM chip for tone
+generation. Yamaha SMAF files are designed for the YMU762 (MA-3)
+and similar chips (MA-2, MA-5). The reasons for using the
+YMF262 are:
+
+* There is an emulator available, currently there are no open
+  source MA-3 emulators I'm aware of.
+
+* 4 operator FM sound synthesis is similar in MA-3 and OPL3.
+
+* It's easier to find a GM instrument bank for the YMF262 than,
+  say, the YM2151 or YM2608.
+
+The disadvantages are:
+
+* No PCM output.
+
+* Only 6 4-op FM channels per chip.
+
+* Custom MA-3 instruments (stored as SysEx events in the SMAF
+  file) can't be programmed in the YMF262.
+
+The player architecture allows easy replacement of the YM262
+emulator by other sound generators.
+
+
+Phones using MA-3:
+
+Here is the list of some mobile phones that use MA-3. More
+devices listed at http://smaf-yamaha.com/what/handsets_ma3.html
+
+* CDMA phones:
+
+LG 530, LG 8080, LG 8180, LG 8280, Motorola T720, Motorola V860,
+Samsung X199, Samsung X319, Samsung X339
+
+* GSM phones:
+
+NEC N8, NEC N8000, Samsung A809, Samsung C100, Samsung S200,
+Samsung S208, Samsung S300, Samsung S308, Samsung S500, Samsung
+T408, Samsung T508, Samsung V200, Samsung V205, Samsung V208,
+Siemens ST60, Siemens ST55
+
