@@ -1,4 +1,4 @@
-$Id: mmf_format.txt,v 1.1 2004/06/29 13:16:39 cmatsuoka Exp $
+$Id: mmf_format.txt,v 1.2 2004/06/29 22:30:29 cmatsuoka Exp $
 
 MMF FILE FORMAT DESCRIPTION
 ===========================
@@ -19,7 +19,7 @@ MTR
 
 <midi event format>
 
-Sysex for FM instruments
+SysEx for FM instruments
 ========================
 
 

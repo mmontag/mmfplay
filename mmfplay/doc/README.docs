@@ -1,4 +1,4 @@
-$Id: README.docs,v 1.1 2004/06/29 13:16:37 cmatsuoka Exp $
+$Id: README.docs,v 1.2 2004/06/29 22:30:29 cmatsuoka Exp $
 
 Copyright.ymf262	YMF262 emulator license from MAME
 
@@ -7,6 +7,8 @@ Mtsu.txt		Documentation of MMF Mtsu chunk (in Japanese)
 
 Pat.txt			Gravis Ultrasound patch format description by
 			Max Maischein.
+
+README.docs		This file.
 
 README.player		Some information on MMFplay internals.
 
