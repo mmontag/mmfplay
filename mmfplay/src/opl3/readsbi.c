@@ -64,7 +64,7 @@ int read_sbi(unsigned char *buf, const int size)
 		printf("0x%02x, ", sbi->A.c_ksl_tl);
 		printf("0x%02x, ", sbi->A.c_ar_dr);
 		printf("0x%02x, ", sbi->A.c_sl_rr);
-		printf("0x%02x", sbi->A.m_ws);
+		printf("0x%02x", sbi->A.c_ws);
 		printf(" },\t/* OP2 */\n");
 
 		printf("\t  { ");
@@ -80,10 +80,11 @@ int read_sbi(unsigned char *buf, const int size)
 		printf("0x%02x, ", sbi->B.c_ksl_tl);
 		printf("0x%02x, ", sbi->B.c_ar_dr);
 		printf("0x%02x, ", sbi->B.c_sl_rr);
-		printf("0x%02x", sbi->B.m_ws);
+		printf("0x%02x", sbi->B.c_ws);
 		printf(" } },\t/* OP4 */\n");
 
-		printf("\t0x%02x, 0x%02x\n", sbi->A.fb_alg, sbi->B.fb_alg);
+		printf("\t0x%02x, 0x%02x, 0x%02x, 0x%02x\n",
+			sbi->A.fb_alg, sbi->B.fb_alg, sbi->fix_dur, sbi->dpitch);
 		printf("      }");
 
 		buf += ins_size;

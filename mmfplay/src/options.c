@@ -24,9 +24,11 @@ static void help(int argc, char **argv)
 	"\n");
 
 	printf(
-"Usage: %s [-Vhs -Ddevice] <mmf_file>\n"
+"Usage: %s [-hPpsV -Ddevice] <mmf_file>\n"
 "	-D --device	Choose output device\n"
 "	-h --help	Show list of command line options\n"
+"	-P --perc	Play only percussive channels\n"
+"	-p --noperc	Don't play percussive channels\n"
 "	-s --show	Show structure of MMF file\n"
 "	-V --version	Show version\n"
 	, argv[0]);
@@ -37,12 +39,14 @@ int parse_cli (int argc, char **argv)
 {
 	int o, optidx = 0;
 
-#define OPTIONS "Vhs"
+#define OPTIONS "D:hPpsV"
 	static struct option lopt[] = {
 		{ "device",		1, 0, 'D' },
-		{ "version",		0, 0, 'V' },
 		{ "help",		0, 0, 'h' },
-		{ "show",		0, 0, 's' }
+		{ "perc",		0, 0, 'P' },
+		{ "noperc",		0, 0, 'p' },
+		{ "show",		0, 0, 's' },
+		{ "version",		0, 0, 'V' }
 	};
 
 	/* Set defaults */
@@ -52,17 +56,23 @@ int parse_cli (int argc, char **argv)
 
 	while ((o = getopt_long(argc, argv, OPTIONS, lopt, &optidx)) != -1) {
 		switch (o) {
-		case 'V':
-			printf("mmfplay " VERSION "\n");
-			exit(0);
 		case 'D':
 			opt.device = strdup(optarg);
+			break;
+		case 'h':
+			help(argc, argv);
+			exit(0);
+		case 'P':
+			opt.perc = 1;
+			break;
+		case 'p':
+			opt.perc = -1;
 			break;
 		case 's':
 			opt.mode = MMFPLAY_SHOW;
 			break;
-		case 'h':
-			help(argc, argv);
+		case 'V':
+			printf("mmfplay " VERSION "\n");
 			exit(0);
 		default:
 			exit(-1);

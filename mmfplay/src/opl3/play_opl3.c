@@ -139,6 +139,9 @@ static void set_ins(int c, int n, int v)
 
 	if (is_drum)
 		set_note(c, ins->dpitch ? ins->dpitch : 60);
+
+	if (ins->fix_dur)
+		channel[c].timer = ins->fix_dur;
 }
 
 static int opl3_init()
@@ -189,5 +192,4 @@ static void opl3_update()
 		YMF262UpdateOne(i, snd_buffer, BUFFER_SIZE, 0);
 	}
 }
-
 

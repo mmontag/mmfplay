@@ -19,6 +19,7 @@ struct opl3_instrument {
 	struct opl2_operator op[4];
 	unsigned char fb_algA;
 	unsigned char fb_algB;
+	unsigned char fix_dur;
 	unsigned char dpitch;
 };
 
