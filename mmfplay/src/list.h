@@ -1,5 +1,5 @@
 /*
- * $Id: list.h,v 1.1 2004/06/29 13:16:43 cmatsuoka Exp $
+ * $Id: list.h,v 1.1.1.1 2004/06/29 13:16:43 cmatsuoka Exp $
  *
  * List management macros from the Linux kernel
  */
