@@ -521,46 +521,39 @@ INLINE void advance(OPL3 *chip)
 
 	chip->eg_timer += chip->eg_timer_add;
 
-	while (chip->eg_timer >= chip->eg_timer_overflow)
-	{
+	while (chip->eg_timer >= chip->eg_timer_overflow) {
 		chip->eg_timer -= chip->eg_timer_overflow;
 
 		chip->eg_cnt++;
 
-		for (i=0; i<9*2*2; i++)
-		{
+		for (i=0; i<9*2*2; i++) {
 			CH  = &chip->P_CH[i/2];
 			op  = &CH->SLOT[i&1];
 #if 1
 			/* Envelope Generator */
-			switch(op->state)
-			{
+			switch(op->state) {
 			case EG_ATT:	/* attack phase */
-				if ( !(chip->eg_cnt & op->eg_m_ar) )
-				{
+				if ( !(chip->eg_cnt & op->eg_m_ar) ) {
 					op->volume += (~op->volume *
-	                        		           (eg_inc[op->eg_sel_ar + ((chip->eg_cnt>>op->eg_sh_ar)&7)])
+	                        		(eg_inc[op->eg_sel_ar + ((chip->eg_cnt>>op->eg_sh_ar)&7)])
         			                          ) >>3;
 
-					if (op->volume <= MIN_ATT_INDEX)
-					{
+					if (op->volume <= MIN_ATT_INDEX) {
 						op->volume = MIN_ATT_INDEX;
 						op->state = EG_DEC;
 					}
-
 				}
-			break;
+				break;
 
 			case EG_DEC:	/* decay phase */
-				if ( !(chip->eg_cnt & op->eg_m_dr) )
-				{
+				if ( !(chip->eg_cnt & op->eg_m_dr) ) {
 					op->volume += eg_inc[op->eg_sel_dr + ((chip->eg_cnt>>op->eg_sh_dr)&7)];
 
 					if ( op->volume >= op->sl )
 						op->state = EG_SUS;
 
 				}
-			break;
+				break;
 
 			case EG_SUS:	/* sustain phase */
 
@@ -568,8 +561,7 @@ INLINE void advance(OPL3 *chip)
 				one can change percusive/non-percussive modes on the fly and
 				the chip will remain in sustain phase - verified on real YM3812 */
 
-				if(op->eg_type)		/* non-percussive mode */
-				{
+				if(op->eg_type) {		/* non-percussive mode */
 									/* do nothing */
 				}
 				else				/* percussive mode */
@@ -584,24 +576,21 @@ INLINE void advance(OPL3 *chip)
 					}
 					/* else do nothing in sustain phase */
 				}
-			break;
+				break;
 
 			case EG_REL:	/* release phase */
-				if ( !(chip->eg_cnt & op->eg_m_rr) )
-				{
+				if ( !(chip->eg_cnt & op->eg_m_rr) ) {
 					op->volume += eg_inc[op->eg_sel_rr + ((chip->eg_cnt>>op->eg_sh_rr)&7)];
 
-					if ( op->volume >= MAX_ATT_INDEX )
-					{
+					if ( op->volume >= MAX_ATT_INDEX ) {
 						op->volume = MAX_ATT_INDEX;
 						op->state = EG_OFF;
 					}
-
 				}
-			break;
+				break;
 
 			default:
-			break;
+				break;
 			}
 #endif
 		}
@@ -613,8 +602,7 @@ INLINE void advance(OPL3 *chip)
 		op  = &CH->SLOT[i&1];
 
 		/* Phase Generator */
-		if(op->vib)
-		{
+		if(op->vib) {
 			UINT8 block;
 			unsigned int block_fnum = CH->block_fnum;
 
@@ -653,8 +641,7 @@ INLINE void advance(OPL3 *chip)
 	chip->noise_p += chip->noise_f;
 	i = chip->noise_p >> FREQ_SH;		/* number of events (shifts of the shift register) */
 	chip->noise_p &= FREQ_MASK;
-	while (i)
-	{
+	while (i) {
 		/*
 		UINT32 j;
 		j = ( (chip->noise_rng) ^ (chip->noise_rng>>14) ^ (chip->noise_rng>>15) ^ (chip->noise_rng>>22) ) & 1;
@@ -1054,7 +1041,7 @@ INLINE void set_ksl_tl(OPL3 *chip,int slot,int v)
 	OPL3_CH   *CH   = &chip->P_CH[slot/2];
 	OPL3_SLOT *SLOT = &CH->SLOT[slot&1];
 
-	int ksl = v>>6; /* 0 / 1.5 / 3.0 / 6.0 dB/OCT */
+	int ksl = v >> 6;		/* 0 / 1.5 / 3.0 / 6.0 dB/OCT */
 
 	SLOT->ksl = ksl ? 3-ksl : 31;
 	SLOT->TL  = (v&0x3f)<<(ENV_BITS-1-7); /* 7 bits TL (bit 6 = always 0) */
@@ -1149,7 +1136,6 @@ INLINE void set_sl_rr(OPL3 *chip,int slot,int v)
 }
 
 
-
 /* write a value v to register r on OPL chip */
 static void OPL3WriteReg(OPL3 *chip, int r, int v)
 {
@@ -1198,22 +1184,6 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			}
 			return;
 		break;
-#if 0
-		case 0x105:	/* OPL3 extensions enable register */
-
-			chip->OPL3_mode = v&0x01;	/* OPL3 mode when bit0=1 otherwise it is OPL2 mode */
-
-			/* following behaviour was tested on real YMF262,
-			switching OPL3/OPL2 modes on the fly:
-			 - does not change the waveform previously selected (unless when ....)
-			 - does not update CH.A, CH.B, CH.C and CH.D output selectors (registers c0-c8) (unless when ....)
-			 - does not disable channels 9-17 on OPL3->OPL2 switch
-			 - does not switch 4 operator channels back to 2 operator channels
-			*/
-
-			return;
-		break;
-#endif
 
 		default:
 		break;
@@ -1780,17 +1750,12 @@ int YMF262Write(int which, int a, int v)
 void YMF262UpdateOne(int which, INT16 *ch_a, int length, int reset_buffer)
 {
 	OPL3		*chip  = YMF262[which];
-
-	/*OPL3SAMPLE	*ch_a = buffers[0];
-	OPL3SAMPLE	*ch_b = buffers[1];
-	OPL3SAMPLE	*ch_c = buffers[2];
-	OPL3SAMPLE	*ch_d = buffers[3];*/
-
 	int i, c;
 
 	if( (void *)chip != cur_chip ){
 		cur_chip = (void *)chip;
 	}
+
 	for( i=0; i < length ; i++ )
 	{
 		int a;
