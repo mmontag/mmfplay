@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.1 2004/06/29 13:16:36 cmatsuoka Exp $
+# $Id: Make.rules,v 1.2 2004/06/29 17:37:53 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall
@@ -59,7 +59,7 @@ endif
 
 depend: Makefile
 	@echo Building dependencies...
-	@$(CC) $(CFLAGS) $(XCFLAGS) -M $(OBJS:.o=.c) >$@
+	@$(CC) $(CFLAGS) $(XCFLAGS) -M $(OBJS:.o=.c) $(XDEPS) >$@
 
 include $(TOPDIR)/Version
 
