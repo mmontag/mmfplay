@@ -1,0 +1,98 @@
+
+The YMF262 emulator is part os MAME, and is distributed under the
+the MAME license.
+
+----------------------------------------------------------------------
+
+
+
+              M.A.M.E.  -  Multiple Arcade Machine Emulator
+         Copyright (C) 1997  by Nicola Salmoria and the MAME team
+
+Please note that many people helped with this project, either directly or
+by releasing source code which was used to write the drivers. We are not
+trying to appropriate merit which isn't ours. See the acknowledgemnts
+section for a list of contributors, however please note that the list is
+largely incomplete. See also the CREDITS section in the emulator to see
+the people who contributed to a specific driver. Again, that list might
+be incomplete. We apologize in advance for any omission.
+
+
+Legal Issues
+------------
+
+1) The main purpose of MAME is to be a reference to the inner workings of
+   the emulated Arcade Machines. This is done for educational purposes and
+   to preserve many historical games from the oblivion they would sink
+   into when the hardware they run on will stop working.
+   Of course to preserve the games you must also be able to actually play
+   them; you can see that as a nice side effect.
+   It is not our intention to infringe any copyrights or patents pending on
+   the original games. All of the source code is either our own or freely
+   available. No portion of the code of the original ROMs is included in
+   the executable.
+
+2) Some of the following rules might not apply to specific portions of MAME
+   (e.g. CPU emulators) which bear different copyright notices.
+
+3) MAME is free. The source code is free. If you paid for it, you've been
+   ripped off. If you sell it, you are a thief.
+
+4.a) (MS-Dos only)
+      The MAME executables must be distributed only in their original .zip
+   archives. You are not allowed to package them together with the original
+   ROMs. You are not allowed to distribute them on the same physical medium.
+   You ARE allowed to make them available for download on the same site, but
+   only if you warn users about the copyright status of the ROMs and the
+   legal issues involved.
+   You are NOT allowed to make MAME available for download together with one
+   giant big file containing all of the supported ROMs, or any files
+   containing more than one ROM set each. If you want to distribute such
+   files, you are not allowed to distribute MAME.
+   You are not allowed to distribute a modified version, nor to remove
+   and/or add files to the .zip archive. Adding one text file to advertise
+   your site is tolerated only if your site contributes original material
+   to the emulation scene.
+   If you distribute the executable, you should also distribute the source
+   code. If you can't do that, you must provide a pointer to a place where
+   the source can be obtained.
+
+4.b) (UNIX port only) 
+   - Every X-Mame executable distribution MUST include AT LEAST the doc
+   directory, with special mention to readme.txt file ( this file )
+   - You are not allowed to distribute X-Mame ( source or binary) and ROM's
+   image in the same package or physical medium. You ARE allowed to make 
+   X-Mame and ROM's available for download on the same site, but only if
+   you warn users about the copyright status of the ROM's and the legal
+   issues involved
+   You are NOT allowed to make MAME available for download together with one
+   giant big file containing all of the supported ROMs, or any files
+   containing more than one ROM set each. If you want to distribute such
+   files, you are not allowed to distribute MAME.
+   - Due to the lack of an "autoconf" you ARE allowed to distribute a modified
+   makefile.unix according your package requirements. You ARE NOT allowed to
+   distribute a package with any modification under the "src" directory.Any 
+   local contributions MUST be distributed under "contrib" directory
+   - If you distribute the executable, you should also distribute the source
+   code. If you can't do that, you must provide a pointer to a place where
+   the source can be obtained.
+
+5) The source code cannot be used in a commercial product without a written
+   authorization of the authors. Use in non commercial products is allowed
+   and indeed encouraged; however if you use portions of the MAME source
+   code in your program, you must make the full source code freely available
+   as well.
+   Derivative works are allowed (provided source code is available), but
+   discouraged: MAME is a project continuously evolving, and you should, in
+   your best interest, submit your contributions to the development team, so
+   that they are integrated in the main distribution.
+   Usage of the _information_ contained in the source code is free for any
+   use. However, given the amount of time and energy it took to collect this
+   information, we would appreciate if you made the additional information
+   you might have freely available as well.
+
+6) All trademarks cited in this document are property of their respective
+   owners.
+
+
+----------------------------------------------------------------------

@@ -1,0 +1,58 @@
+
+YMF289B (OPL3-L)
+
+The YMF289B (OPL3-L) is a synthesizer chip developed specially
+for notebook PCs and PCMCIA (Type II) cards. The YMF289B is
+compatible with the YMF262, the de facto standard in the sound
+card industry. Special functions such as power down mode and
+3.3V power supply are new features that distinguish this
+quality chip.
+
+  	
+YMF715E (OPL3-SA3)
+
+The YMF715E (OPL3-SA3) is a single audio chip that integrates
+the OPL3 chip with DAC, 16 bit sigma-delta CODEC, MPU401 MIDI
+interface, joystick port and a 3D enhanced controller. The LSI
+also includes all analog components which are suitable for
+multimedia applications. It is fully compliant with Plug and Play
+ISA 1.0a and supports necessary PC '97 features such as 16 bit
+address decoding as well as more IRQs and DMAs. Expandability
+options such as zoomed video, modem and CD-ROM interface are
+also support by the YMF715E. An additional power management
+feature handles power-conscious applications by allowing power
+down, power save, partial power down and suspend/resume modes.
+
+
+YMF721 (OPL4-ML2)
+
+The YMF721 (OPL4-ML2) is a high quality yet low cost Wavetable
+synthesizer LSI. The YMF721 integrates an OPL3 (FM synthesizer),
+General MIDI processor and 1MB Wavetable sample ROM into one chip.
+The LSI complies with General MIDI (GM) system level 1 and is
+best suited for multimedia applications, sound cards, MIDI
+synthesis modules and other sound applications. The YMF721 can
+output stereophonic 16 bit digital signal (fs=44.1 kHz), allowing
+it to be connected directly to the YMF701B, 711 or 715 (OPL3-SA,
+SA2 or SA3) as well as the YAC516 (DAC16-L). With an operating
+voltage of 3.3V, this LSI can also be controlled by notebook PCs.
+The power management functions (power down and suspend/resume)
+further minimizes the power consumption of notebook PCs and
+desktop PCs.
+
+  	
+YMF724F (DS-1)
+
+The YMF724F (DS-1) is a high performance audio controller for the
+PCI Bus. The DS-1 consists of two separated functional blocks: the
+PCI Audio block and the Legacy Audio block. The PCI Audio block
+allows a software driver to handle a maximum of 73 concurrent
+audio streams by utilizing the Bus Master DMA engine. The PCI
+Audio Engine converts the sampling rate of each audio stream: the
+streams can thus be mixed without utilizing the CPU and minimizes
+system latency. By using Yamaha's software driver, PCI Audio
+provides 64-voice XG wavetable synthesizer with reverb, chorus and
+variation. It also supports DirectSound hardware accelerator,
+Downloadable Sound (DLS), DirectSound3D hardware accelerator, and
+DirectMusic hardware accelerator.
+

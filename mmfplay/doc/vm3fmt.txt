@@ -1,0 +1,110 @@
+From http://www.mars.dti.ne.jp/~revix/vm3fmt.txt
+
+
+-------------------------------------------------------------------------------
+YAMAHA MA-3 オーサリングツール ボイスファイル(vm3)フォーマット解析
+
+                                                      2003/08/13版 修正  revix.
+-------------------------------------------------------------------------------
+固定ピッチのフォントで閲覧願います。
+
+
+■はじめに
+
+　MLDC16にてN504i用データを作成する際に必須となる YAMAHAのMA-3オーサリングツールの
+ボイスファイルを解析しています。
+　YM-2151,YM-2608,YM-2203等のパラメータをvm3の特定のバンクに直接書き込みたい場合等
+に重宝するかと思います。
+
+■注意及び免責
+
+　・本文書に記載されている内容は独自調査によるものであり、真に正しいかどうかの保障は
+　　一切致しません。
+　・本文書は、制御対象のチップ製造元でありツールの開発元であるYAMAHA、及びそれを利用
+　　するユーザにとってメリットがあると考え公開しています。
+　　したがってメリットが無い又はデメリットの方が大きいと当方が判断した場合には公開を
+　　停止する場合があります。　　
+　・本文書を根拠としたあらゆる損害・損失は一切補償致しません。自己責任で利用願います。
+
+■ヘッダ部
+
+識別コード 'FMM3'		... Char[4] *(4)
+データ部のバイト数	    	... DWORD型 *(4)
+
+■データ部
+
+・１データセットの構造（FM音源）
+
+第1～2バイト		: 第１データセット(01EC) + 現在のセット番号 
+第3バイト		: 実データ長(52)
+第4バイト		: BANK MSB
+第5バイト		: BANK LSB
+第6バイト		: PCH
+第7バイト		: NOTE
+第8バイト		: MODE(0:FM, 1:PCM)
+第9～24バイト		: インストゥメント名
+第25～27バイト		: FM音色基本設定
+第28～34バイト		: オペレータ1設定
+第35～41バイト		: オペレータ2設定
+第42～48バイト		: オペレータ3設定
+第49～55バイト		: オペレータ4設定
+
+■FM音源のパラメータ詳細
+
+・FM音色基本設定
+
+第25バイト	: 不明
+第26バイト	: PAN:5bit, 不明:3bit(最下bitに1)
+第27バイト	: LFO:2bit, PE:1bit, 不明2bit, ALG:3bit
+
+・オペレータ1設定（2-4はこれに準拠）
+第28バイト	: SR:4bit, XOF:1bit, 不明1bit, SUS:1bit, KSR:1bit
+第29バイト	: RR:4bit, DR:4bit
+第30バイト	: AR:4bit, SL:4bit
+第31バイト	: TL:6bit, KSL:2bit
+第32バイト	: 不明1bit, DAM:2bit, EAM:1bit, 不明1bit, DVB:2bit, EVB:1bit
+第33バイト	: MUL:4bit, 不明1bit, DT:3bit
+第34バイト	: WS:5bit, FB:3bit
+
+※2003/08/12,13版では SL,SRが逆になっていましたので修正
+
+■デフォルトの状態でのvm3
+
+ヘッダ部 'FMM3' + 00017F48(98,120)   　      8バイト
+ドラム 55バイト ×  79音色 × 1セット ＝  4,345バイト
+トーン 55バイト × 128音色 × 9セット ＝ 63,360バイト //ユーザセットが9セット
+ドラム 55バイト ×  79音色 × 7セット ＝ 30,415バイト //ユーザセットが7セット 
+---------------------------------------------------
+　　　   　　　 　    　　 　  　　　 　 98,128バイト
+
+■参考
+
+・他のFM音源のレジスタ
+
+[OPNA:YM2608B]
+
+22H    undef4bit,LFO1bit, LFOfreq3bit
+28H    SLOT4bit,undef1bit,BANK1bit,CH#2bit
+A0-A2H F-num2:8bit
+A4-A6H undef2bit, BLOCK3bit,F-num2:3bit
+80-8EH SL4bit, RR4bit
+70-7EH undef4bit,SR4bit
+60-6EH en1bit,undef3bit,DR4bit
+30-3EH undef1bit,DT3bit,MUL4bit
+B0-B2H undef2bit, FB3bit, AL3bit
+B4-B6H PanL1bit,PanR1bit,AMS2bit,undef1bit,PMS3bit
+
+[OPM:YM2151]
+
+01H    undef6bit,LFO1bit, undef1bit
+18H    LFOfreq8bit
+08H    undef1bit,SLOT4bit,CH#3bit
+28-2FH undef1bit,KeyCode7bit
+       undef1bit,Octave3bit,Note4bit
+E0-FFH SL4bit,RR4bit
+C0-DFH DT2:2bit,undef1bit,SR5bit
+A0-BFH EN1bit,undef2bit,DR5bit
+40-5FH undef1bit,DT1:3bit,MUL4bit
+38-3FH undef1bit,PMS3bit,undef2bit,AMS2bit
+20-27H PanR1bit,PanL1bit,FB3bit,AL3bit
+  

@@ -1,0 +1,118 @@
+http://www.memb.jp/~dearna/ma/ma3/ma3.html
+
+
+* Synthesizer
+
+    MA-3 (MobileAudio3 item turn YMU762-Q) FM sound source system
+    (2 operator /4 operators) with it is the hybrid sound source LSI
+    of WaveTable sound source system. The FM sound source operational
+    mode is two, the maximum number of voices differs depending upon
+    this operational mode. Operational mode of 1 stuffing is mode of
+    all 2 operator operations and the number of voices becomes 32 sounds.
+    Operational mode of 2 stuffing is the mode of 4 operator operational
+    possibilities and the number of voices becomes 16 sounds. On the one
+    hand total of the number of voices of the WaveTable sound source has
+    become 8 sounds. These sound sources keep the playback rate of 48Khz.
+
+    The control logic of MA-3 has dynamic voice management mechanism.
+    Because of this the number of voices is shared without voice being
+    possessed, in all channel in each MIDI channel.
+
+    ?????ƒ?????????and the static PCM data etc. of the FM sound source
+    and the WaveTable sound source are recorded to the joint ownership RAM
+    area of MA-3. This RAM area is 8176 bytes, to utilize it
+    cannot do the musical instrument information which exceeds this size. 
+
+* FM
+
+    As for the parameter of FM it is possible to combine the algorithm
+    of self feedback appointment and 8 types of 8 stages. Being 4 operator
+    possible modes, 2 operators it is possible to operate, with selecting
+    algorithm, but that opposite is impossible.
+
+    Common parameter below exists in one musical instrument.
+
+        Algorithm: 0 - 7
+        LFO: 0 - 3
+        Pan (Panpot): 0 - 31
+        Pan switch (PE)
+
+    Parameter below exists in each operator.
+
+        Feedback (FB): However it depends on algorithm.
+        Operator switch
+        Multiple (MULTI): 0 - 15
+        ??ƒ??? (DT): 0 - 7
+        Attack rate (AR): 0 - 15
+        Decay rate (DR): 0 - 15
+        Sustain rate (SR): 0 - 15
+        Release rate (RR): 0 - 15
+        Sustain level (SL): 0 - 15
+        Total level (TL): 0 - 63
+        Key scale level (KSL): 0 - 3
+        AM modulation depth (DAM): 0 - 3
+        PM modulation depth (DVB): 0 - 3
+        Ripple mark (WS): 0 - 31
+        Key off switch (XOF)
+        Sustain switch (SUS)
+        Key scale rate switch (KSR)
+        AM modulation switch (EAM)
+        PM modulation switch (EVB)
+
+    As for articulation information of 2 operator musical instruments
+    16 bytes, as for articulation information of 4 operator musical
+    instruments the RAM area of 30 bytes is consumed in each musical
+    instrument. Because of this, the number of register possible musical
+    instruments when are only 2 operator musical instruments, becomes
+    with 511, when are only 4 operator musical instruments, becomes with
+    272.
+
+    In the wavetable 2048 bytes (the 16bit1024 sample) the wavetable
+    it is the additional register possible to 3 types. This register
+    wavetable is shared with all articulations. 
+
+* WaveTable
+
+    The maximum number of voices of WaveTable is shared with static PCM
+    and stream PCM. When 1 voice it allots to stream PCM, static PCM
+    operates with maximum of 7 voices, when 2 voices it allots to stream
+    PCM, static PCM operates with maximum of 6 voices. Articulation
+    information of the static PCM musical instrument consumes the RAM
+    area of 14 bytes. In addition, the RAM area of 1024 bytes
+    is consumed in allotment of stream PCM concerning 1 voice.
+
+    Is possible the fact that 8bitPCM and 4bitADPCM are used to the
+    PCM data.
+
+    Parameter below exists in static PCM.
+
+        LFO: 0 - 3
+        Pan (Panpot): 0 - 31
+        Attack rate (AR): 0 - 15
+        Decay rate (DR): 0 - 15
+        Sustain rate (SR): 0 - 15
+        Release rate (RR): 0 - 15
+        Sustain level (SL): 0 - 15
+        Total level (TL): 0 - 63
+        Key scale level (KSL): 0 - 3
+        AM modulation depth (DAM): 0 - 3
+        PM modulation depth (DVB): 0 - 3
+        Sampling rate (Fs): 1500 - 48000
+        Loop point (LoopPoint)
+        End point (EndPoint)
+        Key off switch (XOF)
+        Sustain switch (SUS)
+        Key scale rate switch (KSR)
+        AM modulation switch (EAM)
+        PM modulation switch (EVB)
+        Pan switch (PE)
+        ROM switch (RM)
+
+* ROM
+
+    The GM128 timbre and the drum 40 timbre, the wavetable of 7 types is
+    recorded to the musical instrument of the WaveTable sound source to
+    the musical instrument of the FM sound source in the ROM area
+    of MA-3. 
+
+
