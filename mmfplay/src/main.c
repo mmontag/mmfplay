@@ -96,6 +96,8 @@ int main(int argc, char **argv)
 	struct stat st;
 	unsigned char *buffer;
 
+	setbuf(stdout, NULL);
+
 	parse_cli(argc, argv);
 
 	if (optind >= argc) {

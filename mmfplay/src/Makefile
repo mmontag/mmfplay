@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.10 2004/07/01 02:29:37 cmatsuoka Exp $
+# $Id: Makefile,v 1.11 2004/07/01 12:30:52 cmatsuoka Exp $
 
 TOPDIR	= ..
 
@@ -8,7 +8,7 @@ OBJS	= show.o play.o smaf.o tree.o chunk.o main.o gmmap.o sound.o \
 	  playmidi.o sequencer.o options.o getopt_long.o
 DFILES	= Makefile $(OBJS:.o=.c) chunk.h list.h mmfplay.h play.h \
 	  show.h smaf.h sound.h tree.h sequencer.h device.h getopt.h
-CFILES	=
+CFILES	= $(BIN)
 DCFILES	=
 DDIRS	= sound opl3 buzzer
 LIBS	= -Lopl3 -lopl3 -Lbuzzer -lbuzzer -Lsound -lsound -lm

@@ -82,7 +82,6 @@ void seq_tick()
 	if (t-- == 0) {
 		printf("CLK %05d  SEQ_CHN %02d/%02d\r",
 			tick_counter / 10, channels_in_use, SEQUENCER_CHANNELS);
-		fflush(stdout);
 		t = 15;
 	}
 		
