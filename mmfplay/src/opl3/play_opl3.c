@@ -160,6 +160,8 @@ static int opl3_init()
 		_opl3_write(i, 0x01, 0x20);	/* Enable waveform selection */
 		_opl3_write(i, 0xbd, 0xc0);	/* Set tremolo/vibrato depth */
 		_opl3_write(i, 0x105, 0x01);	/* Enable OPL3 mode */
+	}
+	for (i = 0; i < SEQUENCER_CHANNELS; i++) {
 		opl3_op_mode[i] = OPL3_TYPE_4OP;
 	}
 	printf("\n");

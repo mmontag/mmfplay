@@ -31,6 +31,13 @@ struct device dev_fm = {
 
 static int opl3_op_mode[SEQUENCER_CHANNELS];
 
+#ifdef UNROLL
+
+#define opl3_write_op(c,o,b,d)	fm_set_parameter(OPL3_CHIP(c),o,b,ins->op[o].d)
+#define opl3_write_chan(c,b,d)	fm_set_parameter(OPL3_CHIP(c),0,b,d)
+
+#else
+
 /* YMF262 registers */
 
 static int opl3_op[4][OPL3_VOICES] = {
@@ -68,6 +75,8 @@ static int opl3_chn[OPL3_VOICES] = {
 
 #define opl3_write_chan(c,b,d) \
 	_opl3_write(OPL3_CHIP(c),OPL3_REG_CHN(OPL3_CHAN(c),b),d)
+
+#endif
 
 
 static void set_type(int c, int t)
@@ -158,9 +167,10 @@ static int fm_init()
 	for (i = 0; i < NUM_CHIPS; i++) {
 		printf("#%d ", i);
 		YMF262ResetChip(i);
-		_opl3_write(i, 0x01, 0x20);	/* Enable waveform selection */
-		_opl3_write(i, 0xbd, 0xc0);	/* Set tremolo/vibrato depth */
-		_opl3_write(i, 0x105, 0x01);	/* Enable OPL3 mode */
+		//_opl3_write(i, 0x01, 0x20);	/* Enable waveform selection */
+		//_opl3_write(i, 0xbd, 0xc0);	/* Set tremolo/vibrato depth */
+	}
+	for (i = 0; i < SEQUENCER_CHANNELS; i++) {
 		opl3_op_mode[i] = OPL3_TYPE_4OP;
 	}
 	printf("\n");

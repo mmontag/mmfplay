@@ -34,7 +34,6 @@
 #define TL_RES_LEN		(256)	/* 8 bits addressing (real chip) */
 
 
-
 /* register number to channel number , slot offset */
 #define SLOT1 0
 #define SLOT2 1
@@ -156,14 +155,22 @@ typedef struct {
 
 
 
+#ifdef UNROLL
+static const int slot_array[32]= {
+	 0, 1, 2, 3, 4, 5, 6, 7,
+	 8, 9,10,11,12,13,14,15,
+	16,17,18,19,20,21,22,23,
+	24,25,26,27,28,29,30,31
+};
+#else
 /* mapping of register number (offset) to slot number used by the emulator */
-static const int slot_array[32]=
-{
+static const int slot_array[32]= {
 	 0, 2, 4, 1, 3, 5,-1,-1,
 	 6, 8,10, 7, 9,11,-1,-1,
 	12,14,16,13,15,17,-1,-1,
 	-1,-1,-1,-1,-1,-1,-1,-1
 };
+#endif
 
 /* key scale level */
 /* table is 3dB/octave , DV converts this into 6dB/octave */
@@ -526,7 +533,7 @@ INLINE void advance(OPL3 *chip)
 
 		chip->eg_cnt++;
 
-		for (i=0; i<9*2*2; i++) {
+		for (i=0; i< FM_CHANNELS *2; i++) {
 			CH  = &chip->P_CH[i/2];
 			op  = &CH->SLOT[i&1];
 #if 1
@@ -596,7 +603,7 @@ INLINE void advance(OPL3 *chip)
 		}
 	}
 
-	for (i=0; i<9*2*2; i++)
+	for (i=0; i< FM_CHANNELS *2; i++)
 	{
 		CH  = &chip->P_CH[i/2];
 		op  = &CH->SLOT[i&1];
@@ -975,6 +982,9 @@ INLINE void CALC_FCSLOT(OPL3_CH *CH,OPL3_SLOT *SLOT)
 	}
 }
 
+#define SET2_OFFSET (FM_CHANNELS/2)
+#define FIRST_SET(c) ((c) < SET2_OFFSET)
+
 /* set multi,am,vib,EG-TYP,KSR,mul */
 INLINE void set_mul(OPL3 *chip,int slot,int v)
 {
@@ -999,6 +1009,17 @@ INLINE void set_mul(OPL3 *chip,int slot,int v)
 		//if this is one of the slots of 2nd channel forming up a 4-op channel
 		//update it using channel data of 1st channel of a pair
 		//else normal 2 operator function
+#ifdef UNROLL
+		if (FIRST_SET(chan_no)) {
+			CALC_FCSLOT(CH,SLOT);
+		} else {
+			if ((CH - SET2_OFFSET)->extended) {
+				CALC_FCSLOT(CH - SET2_OFFSET/2,SLOT);
+			} else {
+				CALC_FCSLOT(CH,SLOT);
+			}
+		}
+#else
 		switch(chan_no)
 		{
 		case 0: case 1: case 2:
@@ -1032,6 +1053,7 @@ INLINE void set_mul(OPL3 *chip,int slot,int v)
 				CALC_FCSLOT(CH,SLOT);
 		break;
 		}
+#endif
 	}
 }
 
@@ -1058,6 +1080,17 @@ INLINE void set_ksl_tl(OPL3 *chip,int slot,int v)
 		//if this is one of the slots of 2nd channel forming up a 4-op channel
 		//update it using channel data of 1st channel of a pair
 		//else normal 2 operator function
+#ifdef UNROLL
+		if (FIRST_SET(chan_no)) {
+			SLOT->TLL = SLOT->TL + (CH->ksl_base>>SLOT->ksl);
+		} else {
+			if ((CH-SET2_OFFSET)->extended) {
+				SLOT->TLL = SLOT->TL + ((CH-SET2_OFFSET)->ksl_base>>SLOT->ksl);
+			} else {
+				SLOT->TLL = SLOT->TL + (CH->ksl_base>>SLOT->ksl);
+			}
+		}
+#else
 		switch(chan_no)
 		{
 		case 0: case 1: case 2:
@@ -1091,6 +1124,7 @@ INLINE void set_ksl_tl(OPL3 *chip,int slot,int v)
 				SLOT->TLL = SLOT->TL + (CH->ksl_base>>SLOT->ksl);
 		break;
 		}
+#endif
 	}
 }
 
@@ -1139,7 +1173,7 @@ INLINE void set_sl_rr(OPL3 *chip,int slot,int v)
 /* write a value v to register r on OPL chip */
 static void OPL3WriteReg(OPL3 *chip, int r, int v)
 {
-	OPL3_CH *CH;
+	OPL3_CH *CH, *CH2;
 	unsigned int ch_offset = 0;
 	int slot;
 	int block_fnum;
@@ -1157,6 +1191,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 			{
 				UINT8 prev;
 
+/* UNROLL fix */
 				CH = &chip->P_CH[0];		/* channel 0 */
 				prev = CH->extended;
 				CH->extended = (v>>0) & 1;
@@ -1189,7 +1224,11 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 		break;
 		}
 
+#ifdef UNROLL
+		ch_offset = 0;
+#else
 		ch_offset = 9;	/* register page #2 starts from channel 9 (counting from 0) */
+#endif
 	}
 
 	/* adjust bus to 8 bits */
@@ -1235,7 +1274,9 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 
 		/* keyon,block,fnum */
 		if( (r&0x0f) > 8) return;
+
 		CH = &chip->P_CH[(r&0x0f) + ch_offset];
+		CH2 = CH + SET2_OFFSET;
 
 		if(!(r&0x10))
 		{	/* a0-a8 */
@@ -1247,6 +1288,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 
 			{
 				int chan_no = (r&0x0f) + ch_offset;
+				int action;
 
 				/* in OPL3 mode */
 				//DO THIS:
@@ -1256,23 +1298,41 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				//OR THIS:
 				//if this is 2nd channel forming up 4-op channel just do nothing
 				//else normal 2 operator function keyon/off
+#ifdef UNROLL
+				
+				action = (v & 0x20) ? 1 : ~1;
+				
+				
+				if (FIRST_SET(chan_no)) {
+					FM_KEYON (&CH->SLOT[SLOT1], action);
+					FM_KEYON (&CH->SLOT[SLOT2], action);
+					if (CH->extended) {
+						FM_KEYON (&CH2->SLOT[SLOT1], action);
+						FM_KEYON (&CH2)->SLOT[SLOT2], action);
+					}
+				} else {
+					if ((CH - SET2_OFFSET)->extended) {
+						// do nothing;
+					} else {
+						FM_KEYON (&CH->SLOT[SLOT1], action);
+						FM_KEYON (&CH->SLOT[SLOT2], action);
+					}
+				}
+
+#else
 				switch(chan_no)
 				{
 				case 0: case 1: case 2:
 				case 9: case 10: case 11:
-					if (CH->extended)
-					{
+					if (CH->extended) {
 						//if this is 1st channel forming up a 4-op channel
 						//ALSO keyon/off slots of 2nd channel forming up 4-op channel
-						if(v&0x20)
-						{
+						if(v&0x20) {
 							FM_KEYON (&CH->SLOT[SLOT1], 1);
 							FM_KEYON (&CH->SLOT[SLOT2], 1);
 							FM_KEYON (&(CH+3)->SLOT[SLOT1], 1);
 							FM_KEYON (&(CH+3)->SLOT[SLOT2], 1);
-						}
-						else
-						{
+						} else {
 							FM_KEYOFF(&CH->SLOT[SLOT1],~1);
 							FM_KEYOFF(&CH->SLOT[SLOT2],~1);
 							FM_KEYOFF(&(CH+3)->SLOT[SLOT1],~1);
@@ -1282,13 +1342,10 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 					else
 					{
 						//else normal 2 operator function keyon/off
-						if(v&0x20)
-						{
+						if(v&0x20) {
 							FM_KEYON (&CH->SLOT[SLOT1], 1);
 							FM_KEYON (&CH->SLOT[SLOT2], 1);
-						}
-						else
-						{
+						} else {
 							FM_KEYOFF(&CH->SLOT[SLOT1],~1);
 							FM_KEYOFF(&CH->SLOT[SLOT2],~1);
 						}
@@ -1297,20 +1354,14 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 
 				case 3: case 4: case 5:
 				case 12: case 13: case 14:
-					if ((CH-3)->extended)
-					{
+					if ((CH-3)->extended) {
 						//if this is 2nd channel forming up 4-op channel just do nothing
-					}
-					else
-					{
+					} else {
 						//else normal 2 operator function keyon/off
-						if(v&0x20)
-						{
+						if(v&0x20) {
 							FM_KEYON (&CH->SLOT[SLOT1], 1);
 							FM_KEYON (&CH->SLOT[SLOT2], 1);
-						}
-						else
-						{
+						} else {
 							FM_KEYOFF(&CH->SLOT[SLOT1],~1);
 							FM_KEYOFF(&CH->SLOT[SLOT2],~1);
 						}
@@ -1318,18 +1369,16 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				break;
 
 				default:
-					if(v&0x20)
-					{
+					if(v&0x20) {
 						FM_KEYON (&CH->SLOT[SLOT1], 1);
 						FM_KEYON (&CH->SLOT[SLOT2], 1);
-					}
-					else
-					{
+					} else {
 						FM_KEYOFF(&CH->SLOT[SLOT1],~1);
 						FM_KEYOFF(&CH->SLOT[SLOT2],~1);
 					}
 				break;
 				}
+#endif
 			}
 		}
 		/* update */
@@ -1360,12 +1409,36 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 				//OR THIS:
 				//if this is 2nd channel forming up 4-op channel just do nothing
 				//else normal 2 operator function keyon/off
+
+#ifdef UNROLL
+				if (FIRST_SET(chan_no)) {
+					CH->SLOT[SLOT1].TLL = CH->SLOT[SLOT1].TL + (CH->ksl_base>>CH->SLOT[SLOT1].ksl);
+					CH->SLOT[SLOT2].TLL = CH->SLOT[SLOT2].TL + (CH->ksl_base>>CH->SLOT[SLOT2].ksl);
+					CALC_FCSLOT(CH,&CH->SLOT[SLOT1]);
+					CALC_FCSLOT(CH,&CH->SLOT[SLOT2]);
+
+					if (CH->extended) {
+						CH2->SLOT[SLOT1].TLL = CH2->SLOT[SLOT1].TL + (CH->ksl_base>>CH2->SLOT[SLOT1].ksl);
+						CH2->SLOT[SLOT2].TLL = CH2->SLOT[SLOT2].TL + (CH->ksl_base>>CH2->SLOT[SLOT2].ksl);
+						CALC_FCSLOT(CH,&CH2->SLOT[SLOT1]);
+						CALC_FCSLOT(CH,&CH2->SLOT[SLOT2]);
+					}
+				} else {
+					if ((CH - SET2_OFFSET)->extended) {
+						// do nothing
+					} else {
+						CH->SLOT[SLOT1].TLL = CH->SLOT[SLOT1].TL + (CH->ksl_base>>CH->SLOT[SLOT1].ksl);
+						CH->SLOT[SLOT2].TLL = CH->SLOT[SLOT2].TL + (CH->ksl_base>>CH->SLOT[SLOT2].ksl);
+						CALC_FCSLOT(CH,&CH->SLOT[SLOT1]);
+						CALC_FCSLOT(CH,&CH->SLOT[SLOT2]);
+					}
+				}
+#else
 				switch(chan_no)
 				{
 				case 0: case 1: case 2:
 				case 9: case 10: case 11:
-					if (CH->extended)
-					{
+					if (CH->extended) {
 						//if this is 1st channel forming up a 4-op channel
 						//ALSO update slots of 2nd channel forming up 4-op channel
 
@@ -1423,6 +1496,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 					CALC_FCSLOT(CH,&CH->SLOT[SLOT2]);
 				break;
 				}
+#endif
 			}
 		}
 	break;
@@ -1432,6 +1506,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 		if( (r&0xf) > 8) return;
 
 		CH = &chip->P_CH[(r&0xf) + ch_offset];
+		CH2 = CH + SET2_OFFSET;
 
 
 		CH->SLOT[SLOT1].FB  = (v>>1)&7 ? ((v>>1)&7) + 7 : 0;
@@ -1440,15 +1515,112 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 		{
 			int chan_no = (r&0x0f) + ch_offset;
 
+#ifdef UNROLL
+			if (FIRST_SET(chan_no)) {
+				if (CH->extended) {
+					UINT8 conn = (CH->SLOT[SLOT1].CON<<1) || ((CH+3)->SLOT[SLOT1].CON<<0);
+					switch(conn) {
+					case 0:
+						/* 1 -> 2 -> 3 -> 4 - out */
+
+						CH->SLOT[SLOT1].connect = &phase_modulation;
+						CH->SLOT[SLOT2].connect = &phase_modulation2;
+						CH2->SLOT[SLOT1].connect = &phase_modulation;
+						CH2->SLOT[SLOT2].connect = &chanout[chan_no + SET2_OFFSET];
+						break;
+					case 1:
+						/* 1 -> 2 -\
+						   3 -> 4 -+- out */
+
+						CH->SLOT[SLOT1].connect = &phase_modulation;
+						CH->SLOT[SLOT2].connect = &chanout[ chan_no ];
+						CH2->SLOT[SLOT1].connect = &phase_modulation;
+						CH2->SLOT[SLOT2].connect = &chanout[ chan_no + SET2_OFFSET ];
+						break;
+					case 2:
+						/* 1 -----------\
+						   2 -> 3 -> 4 -+- out */
+
+						CH->SLOT[SLOT1].connect = &chanout[ chan_no ];
+						CH->SLOT[SLOT2].connect = &phase_modulation2;
+						CH2->SLOT[SLOT1].connect = &phase_modulation;
+						CH2->SLOT[SLOT2].connect = &chanout[ chan_no + SET2_OFFSET ];
+						break;
+					case 3:
+						/* 1 ------\
+						   2 -> 3 -+- out
+						   4 ------/     */
+						CH->SLOT[SLOT1].connect = &chanout[ chan_no ];
+						CH->SLOT[SLOT2].connect = &phase_modulation2;
+						CH2->SLOT[SLOT1].connect = &chanout[ chan_no + SET2_OFFSET ];
+						CH2->SLOT[SLOT2].connect = &chanout[ chan_no + SET2_OFFSET ];
+						break;
+					}
+				} else {
+					/* 2 operators mode */
+/* UNROLL fix */
+					CH->SLOT[SLOT1].connect = CH->SLOT[SLOT1].CON ? &chanout[(r&0xf)+ch_offset] : &phase_modulation;
+					CH->SLOT[SLOT2].connect = &chanout[(r&0xf)+ch_offset];
+				}
+			} else {
+				if ((CH-SET2_OFFSET)->extended)
+				{
+					UINT8 conn = ((CH-SET2_OFFSET)->SLOT[SLOT1].CON<<1) || (CH->SLOT[SLOT1].CON<<0);
+					switch(conn) {
+					case 0:
+						/* 1 -> 2 -> 3 -> 4 - out */
+
+						(CH-SET2_OFFSET)->SLOT[SLOT1].connect = &phase_modulation;
+						(CH-SET2_OFFSET)->SLOT[SLOT2].connect = &phase_modulation2;
+						CH->SLOT[SLOT1].connect = &phase_modulation;
+						CH->SLOT[SLOT2].connect = &chanout[ chan_no ];
+						break;
+					case 1:
+						/* 1 -> 2 -\
+						   3 -> 4 -+- out */
+
+						(CH-SET2_OFFSET)->SLOT[SLOT1].connect = &phase_modulation;
+						(CH-SET2_OFFSET)->SLOT[SLOT2].connect = &chanout[ chan_no - SET2_OFFSET ];
+						CH->SLOT[SLOT1].connect = &phase_modulation;
+						CH->SLOT[SLOT2].connect = &chanout[ chan_no ];
+						break;
+					case 2:
+						/* 1 -----------\
+						   2 -> 3 -> 4 -+- out */
+
+						(CH-SET2_OFFSET)->SLOT[SLOT1].connect = &chanout[ chan_no - SET2_OFFSET ];
+						(CH-SET2_OFFSET)->SLOT[SLOT2].connect = &phase_modulation2;
+						CH->SLOT[SLOT1].connect = &phase_modulation;
+						CH->SLOT[SLOT2].connect = &chanout[ chan_no ];
+						break;
+					case 3:
+						/* 1 ------\
+						   2 -> 3 -+- out
+						   4 ------/     */
+						(CH-SET2_OFFSET)->SLOT[SLOT1].connect = &chanout[ chan_no - SET2_OFFSET ];
+						(CH-SET2_OFFSET)->SLOT[SLOT2].connect = &phase_modulation2;
+						CH->SLOT[SLOT1].connect = &chanout[ chan_no ];
+						CH->SLOT[SLOT2].connect = &chanout[ chan_no ];
+					break;
+					}
+				}
+				else
+				{
+/* UNROLL fix */
+					/* 2 operators mode */
+					CH->SLOT[SLOT1].connect = CH->SLOT[SLOT1].CON ? &chanout[(r&0xf)+ch_offset] : &phase_modulation;
+					CH->SLOT[SLOT2].connect = &chanout[(r&0xf)+ch_offset];
+				}
+			break;
+			}
+#else
 			switch(chan_no)
 			{
 			case 0: case 1: case 2:
 			case 9: case 10: case 11:
-				if (CH->extended)
-				{
+				if (CH->extended) {
 					UINT8 conn = (CH->SLOT[SLOT1].CON<<1) || ((CH+3)->SLOT[SLOT1].CON<<0);
-					switch(conn)
-					{
+					switch(conn) {
 					case 0:
 						/* 1 -> 2 -> 3 -> 4 - out */
 
@@ -1552,6 +1724,7 @@ static void OPL3WriteReg(OPL3 *chip, int r, int v)
 					CH->SLOT[SLOT2].connect = &chanout[(r&0xf)+ch_offset];
 			break;
 			}
+#endif
 		}
 	break;
 
@@ -1602,7 +1775,7 @@ static void OPL3ResetChip(OPL3 *chip)
 
 
 	/* reset operator parameters */
-	for( c = 0 ; c < 9*2 ; c++ )
+	for( c = 0 ; c < FM_CHANNELS ; c++ )
 	{
 		OPL3_CH *CH = &chip->P_CH[c];
 		for(s = 0 ; s < 2 ; s++ )
