@@ -31,8 +31,8 @@ static void midi_note_on(int trk, int note, int vel, int time)
 
 	assert(trk < MIDI_TRACKS);
 
-if (track[trk].status & TRK_STATUS_PERC)
-	return;
+	if (track[trk].status & TRK_STATUS_PERC)
+		return;
 
 	if (vel > 63)
 		vel = 63;

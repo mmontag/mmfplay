@@ -36,7 +36,8 @@ struct ma3_instrument {
 	struct ma3_operator op[4];
 };
 
-#define TRK_STATUS_PERC (1 << 6)
+
+#define TRK_STATUS_PERC		(1 << 6)	/* Percussive channel */
 
 #endif
 
