@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.7 2004/06/30 13:28:39 cmatsuoka Exp $
+# $Id: Make.rules,v 1.8 2004/06/30 14:01:10 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall
@@ -66,14 +66,17 @@ depend: $(MAKEFILE)
 # Poor man's autoconf
 $(CONF):
 	@rm -f $@
-	@case `uname -s` in				\
+	case `uname -s` in				\
 	*Linux)						\
 		SOUND=oss;				\
-		echo "XXCFLAGS=-DHAS_GETOPT_LONG">>$@;;	\
+		FLAGS="-DHAS_GETOPT_LONG";;		\
 	SunOS)						\
 		SOUND=solaris;;				\
+	*)						\
+		SOUND=`uname -s|tr A-Z a-z`;;		\
 	esac;						\
 	echo "SOUND_DRIVER=$$SOUND">>$@;		\
+	echo "XXCFLAGS=$$FLAGS">>$@;			\
 	echo "USERNAME=`whoami`@`hostname`">>$@
 	
 include $(TOPDIR)/Version
