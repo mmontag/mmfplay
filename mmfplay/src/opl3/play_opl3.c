@@ -79,7 +79,7 @@ static int opl3_chn[OPL3_VOICES] = {
 	_opl3_write(OPL3_CHIP(c),OPL3_REG_CHN(OPL3_CHAN(c),b),d)
 
 
-static void set_ins(int c, int n)
+static void set_ins(int c, int n, int v)
 {
 	int i;
 	struct opl3_instrument *ins;
@@ -161,10 +161,9 @@ static void opl3_update()
 	for (c = 0; c < 6 /*SEQUENCER_CHANNELS*/; c++) {
 
 		if (channel[c].ins != OPL3_INS(c)) {
-			/* set new instrument */
-			set_ins(c, channel[c].ins);
 			if (channel[c].newkey) {
 				set_note(c, channel[c].note);
+				set_ins(c, channel[c].ins, channel[c].vol);
 				channel[c].newkey = 0;
 			}
 			if (channel[c].timer == 0) {

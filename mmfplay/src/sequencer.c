@@ -61,7 +61,7 @@ void seq_set_volume(int c, int i)
 
 void seq_set_note(int c, int i, int timer, int track)
 {
-	printf("SEQ: ch%d, note %d\n", c, i);
+	/*printf("SEQ: ch%d, note %d\n", c, i);*/
 	channel[c].note = i;
 	channel[c].timer = timer;
 	channel[c].track = track;
