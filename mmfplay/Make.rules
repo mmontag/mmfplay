@@ -1,4 +1,4 @@
-# $Id: Make.rules,v 1.12 2004/07/01 02:19:12 cmatsuoka Exp $
+# $Id: Make.rules,v 1.13 2004/07/01 02:29:37 cmatsuoka Exp $
 
 CC	= gcc
 CFLAGS	= -g -O0 -Wall -DINLINE=inline $(XCFLAGS) $(XXCFLAGS)
@@ -34,6 +34,9 @@ ifdef DDIRS
 		(cd $$i; [ -f Makefile ] && $(MAKE) all) \
 	done; true
 endif
+
+$(BIN): $(OBJS)
+	$(LD) $(LDFLAGS) -o$@ $+ $(LIBS) $(XXLIBS)
 
 $(OBJS): $(MAKEFILE) $(CONF)
 
