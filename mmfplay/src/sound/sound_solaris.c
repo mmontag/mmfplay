@@ -1,12 +1,3 @@
-/*  Sarien - A Sierra AGI resource interpreter engine
- *  Copyright (C) 1999,2001 Stuart George and Claudio Matsuoka
- *  
- *  $Id: sound_solaris.c,v 1.2 2004/06/30 13:28:40 cmatsuoka Exp $
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; see docs/COPYING for further details.
- */
 
 /* Solaris sound driver by Claudio Matsuoka <claudio@helllabs.org>
  * Note: the sound player needs 22 kHz signed 16 bit mono output so only
