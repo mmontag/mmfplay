@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.3 2004/07/01 12:30:53 cmatsuoka Exp $
+# $Id: Makefile,v 1.4 2004/07/01 23:50:05 cmatsuoka Exp $
 
 TOPDIR	= ../..
 
@@ -17,7 +17,10 @@ BIN	=
 all: $(LIB)
 
 readsbi: readsbi.o
-	$(LD) $(LDFLAGS) -o$@ $+ -lm
+	$(LD) $(LDFLAGS) -o $@ $+ -lm
+
+opled: opled.c
+	$(LD) $(LDFLAGS) -o $@ $+ `pkg-config --cflags --libs gtk+-2.0`
 
 include $(TOPDIR)/Make.rules
 
