@@ -133,8 +133,9 @@ static int opl2_init()
 		printf("#%d ", i);
 		YMF262ResetChip(i);
 		_opl3_write(i, 0x01, 0x20);	/* Enable waveform selection */
+		_opl3_write(i, 0xbd, 0xc0);	/* Set tremolo/vibrato depth */
 		_opl3_write(i, 0x104, 0x00);	/* Disable 4-op mode */
-		_opl3_write(i, 0x105, 0x01);	/* Disable OPL3 mode */
+		_opl3_write(i, 0x105, 0x01);	/* Enable OPL3 mode */
 	}
 	printf("\n");
 
