@@ -96,17 +96,32 @@ int main(int argc, char **argv)
 	struct stat st;
 	unsigned char *buffer;
 
-	printf("MMFplay version " VERSION " (built "
-		__DATE__ " " __TIME__ " by " USERNAME ")\n");
-
 	parse_cli(argc, argv);
 
- 	f = fopen(argv[optind], "r");
+	if (optind >= argc) {
+		fprintf(stderr, "%s: No files to play.\n", argv[0]);
+		fprintf(stderr, "Use `%s --help' for more information.\n",
+			argv[0]);
+		exit(1);
+	}
+
+ 	if ((f = fopen(argv[optind], "r")) == NULL) {
+		fprintf(stderr, "Error: Can't open file `%s'.\n", argv[optind]);
+		exit(1);
+	}
 	fstat(fileno(f), &st);
 	buffer = malloc(st.st_size);
 	fread(buffer, 1, st.st_size, f);
 	fclose(f);
 
+	if (!cmp4(buffer, 'M', 'M', 'M', 'D')) {
+		fprintf(stderr, "Error: can't recognize file format.\n");
+		free(buffer);
+		exit(1);
+	}
+
+	printf("MMFplay version " VERSION " (built "
+		__DATE__ " " __TIME__ " by " USERNAME ")\n");
 
 	if (opt.mode == MMFPLAY_SHOW) {
 		printf("\nMMF file structure for %s\n", argv[1]);
@@ -151,9 +166,10 @@ int main(int argc, char **argv)
 		deinit_sound();
 	}
 
-
 	release_chunks(&chunk_head);
 	release_chunks(&chunk16_head);
+
+	free(buffer);
 
 	return 0;
 }

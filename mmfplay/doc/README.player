@@ -1,4 +1,4 @@
-$Id: README.player,v 1.1 2004/06/29 13:16:37 cmatsuoka Exp $
+$Id: README.player,v 1.2 2004/06/29 18:18:55 cmatsuoka Exp $
 
 
 Architecture:
@@ -51,21 +51,4 @@ The disadvantages are:
 The player architecture allows easy replacement of the YM262
 emulator by other sound generators.
 
-
-Phones using MA-3:
-
-Here is the list of some mobile phones that use MA-3. More
-devices listed at http://smaf-yamaha.com/what/handsets_ma3.html
-
-* CDMA phones:
-
-LG 530, LG 8080, LG 8180, LG 8280, Motorola T720, Motorola V860,
-Samsung X199, Samsung X319, Samsung X339
-
-* GSM phones:
-
-NEC N8, NEC N8000, Samsung A809, Samsung C100, Samsung S200,
-Samsung S208, Samsung S300, Samsung S308, Samsung S500, Samsung
-T408, Samsung T508, Samsung V200, Samsung V205, Samsung V208,
-Siemens ST60, Siemens ST55
 

@@ -8,7 +8,7 @@
 
 struct options opt;
 
-static void help (int argc, char **argv)
+static void help(int argc, char **argv)
 {
 	fprintf (stdout,
 "Usage: %s [-Vhs] <mmf_file>\n"
@@ -37,6 +37,7 @@ int parse_cli (int argc, char **argv)
 	while ((o = getopt_long(argc, argv, OPTIONS, lopt, &optidx)) != -1) {
 		switch (o) {
 		case 'V':
+			printf("mmfplay " VERSION "\n");
 			exit(0);
 		case 's':
 			opt.mode = MMFPLAY_SHOW;
